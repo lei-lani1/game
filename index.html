@@ -1,0 +1,2281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>脑筋急转弯挑战</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .category-selection,
+        .game-area {
+            display: none;
+        }
+
+        .category-selection.active,
+        .game-area.active {
+            display: block;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #667eea;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .hint-counter {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #d35400;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: inline-block;
+            font-size: 0.9em;
+        }
+
+        .hint-warning {
+            color: #e74c3c;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .level-badge {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(255, 154, 158, 0.4);
+        }
+
+        .level-complete {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .level-complete h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .level-complete p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .stars {
+            font-size: 2em;
+            margin: 15px 0;
+        }
+
+        .question-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .answer-section {
+            margin-bottom: 30px;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            flex: 1;
+            min-width: 100px;
+            max-width: 140px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-show {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-show:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .result-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .result-correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .result-wrong {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .answer-reveal {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            border-radius: 10px;
+            color: #856404;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .celebrate {
+            animation: celebrate 0.5s ease-in-out;
+        }
+
+        .emoji {
+            font-size: 2em;
+            margin: 10px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            text-align: center;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .category-card.puzzle {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .category-card.funny {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .category-card.word {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .category-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .category-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .category-desc {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .category-count {
+            font-size: 0.8em;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        .back-button {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #d35400;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(252, 182, 159, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+            }
+
+            .game-info {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .info-item {
+                flex: 1 1 40%;
+                min-width: 100px;
+            }
+
+            .info-value {
+                font-size: 1.2em;
+            }
+
+            .question-box {
+                font-size: 1.1em;
+                padding: 20px;
+                min-height: 100px;
+            }
+
+            .answer-input {
+                padding: 12px;
+                font-size: 1em;
+            }
+
+            .button-container {
+                gap: 6px;
+            }
+
+            .btn {
+                padding: 10px 12px;
+                font-size: 0.9em;
+                min-width: 80px;
+                max-width: 110px;
+                border-radius: 8px;
+            }
+
+            .level-badge {
+                font-size: 0.9em;
+                padding: 6px 15px;
+            }
+
+            .hint-counter {
+                font-size: 0.8em;
+                padding: 6px 12px;
+            }
+
+            .result-message,
+            .answer-reveal {
+                font-size: 0.9em;
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+                margin: 5px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .info-item {
+                flex: 1 1 45%;
+            }
+
+            .info-label {
+                font-size: 0.8em;
+            }
+
+            .info-value {
+                font-size: 1em;
+            }
+
+            .question-box {
+                font-size: 1em;
+                padding: 15px;
+            }
+
+            .btn {
+                padding: 8px 10px;
+                font-size: 0.85em;
+                min-width: 70px;
+                max-width: 100px;
+            }
+
+            .button-container {
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="category-selection active" id="categorySelection">
+            <h1>🧠 脑筋急转弯挑战</h1>
+            <p class="subtitle">选择你喜欢的题目类型开始挑战！</p>
+            
+            <div class="category-grid">
+                <div class="category-card puzzle" onclick="selectCategory('puzzle')">
+                    <div class="category-icon">🧩</div>
+                    <div class="category-name">益智类</div>
+                    <div class="category-desc">考验逻辑思维和推理能力</div>
+                    <div class="category-count">1000道题目</div>
+                </div>
+                
+                <div class="category-card funny" onclick="selectCategory('funny')">
+                    <div class="category-icon">😄</div>
+                    <div class="category-name">搞笑类</div>
+                    <div class="category-desc">轻松幽默，快乐答题</div>
+                    <div class="category-count">1000道题目</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-area" id="gameArea">
+            <button class="back-button" onclick="backToCategories()">← 返回分类选择</button>
+            
+            <h1 id="gameTitle">🧠 脑筋急转弯挑战</h1>
+            <p class="subtitle" id="gameSubtitle">测试你的思维敏捷度！</p>
+            
+            <div class="category-indicator" id="categoryIndicator">益智类</div>
+            <div class="level-badge" id="levelBadge">第 1 关</div>
+            <div class="hint-counter" id="hintCounter">💡 显示答案机会：3 次</div>
+
+            <div class="game-info">
+                <div class="info-item">
+                    <div class="info-label">当前题目</div>
+                    <div class="info-value" id="currentQuestion">1</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">答对题数</div>
+                    <div class="info-value" id="correctCount">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">本关题数</div>
+                    <div class="info-value" id="totalQuestions">10</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">当前关卡</div>
+                    <div class="info-value" id="currentLevel">1/10</div>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 10%"></div>
+            </div>
+
+            <div class="question-box" id="questionBox">
+                加载中...
+            </div>
+
+            <div class="answer-section">
+                <input type="text" class="answer-input" id="answerInput" placeholder="输入你的答案..." onkeypress="handleKeyPress(event)">
+                <div class="button-container">
+                    <button class="btn btn-submit" onclick="checkAnswer()">提交答案</button>
+                    <button class="btn btn-show" onclick="showAnswer()">显示答案</button>
+                    <button class="btn btn-next" onclick="nextQuestion()">下一题</button>
+                </div>
+            </div>
+
+            <div class="result-message" id="resultMessage"></div>
+            <div class="answer-reveal" id="answerReveal"></div>
+        </div>
+    </div>
+
+    <script>
+        // 益智类题库 (1000道题，这里展示部分示例)
+        const puzzleRiddles = [
+            { question: "什么东西越洗越脏？", answer: "水" },
+            { question: "什么东西打破了才能用？", answer: "鸡蛋" },
+            { question: "什么东西有头没有尾，有脚没有腿？", answer: "硬币" },
+            { question: "什么东西越擦越湿？", answer: "毛巾" },
+            { question: "什么东西有牙齿但不能咬东西？", answer: "梳子" },
+            { question: "什么东西有眼睛看不见？", answer: "针" },
+            { question: "什么东西有手不能拿？", answer: "钟表" },
+            { question: "什么东西有腿不能走路？", answer: "桌子" },
+            { question: "什么东西有嘴不说话？", answer: "瓶子" },
+            { question: "什么东西有耳朵听不见？", answer: "玉米" },
+            { question: "什么东西越热越爱出来？", answer: "汗" },
+            { question: "什么东西有四条腿，但不会走路？", answer: "椅子" },
+            { question: "什么东西有千条腿，但不会走路？", answer: "扫把" },
+            { question: "什么东西有万条腿，但不会走路？", answer: "头发" },
+            { question: "什么东西有翅膀不会飞？", answer: "飞机" },
+            { question: "什么东西有脸没有口？", answer: "时钟" },
+            { question: "什么东西有背没有骨？", answer: "书" },
+            { question: "什么东西有肚没有肠？", answer: "书包" },
+            { question: "什么东西有皮没有骨？", answer: "气球" },
+            { question: "什么东西有骨没有肉？", answer: "鱼刺" }
+        ];
+
+        // 搞笑类题库 (1000道题，这里展示部分示例)
+        const funnyRiddles = [
+            { question: "为什么企鹅只有肚子是白的？", answer: "因为手短洗不到背" },
+            { question: "为什么小明能一只手让车子停下来？", answer: "因为他在打出租车" },
+            { question: "什么人始终不敢洗澡？", answer: "泥人" },
+            { question: "什么东西买的人知道，卖的人知道，用的人不知道？", answer: "棺材" },
+            { question: "为什么飞机飞这么高？", answer: "因为怕撞到星星" },
+            { question: "什么布剪不断？", answer: "瀑布" },
+            { question: "什么人一年只工作一天？", answer: "圣诞老人" },
+            { question: "什么路不能走？", answer: "电路" },
+            { question: "什么车没有轮子？", answer: "风车" },
+            { question: "什么瓜不能吃？", answer: "傻瓜" },
+            { question: "什么门永远关不上？", answer: "球门" },
+            { question: "什么书在书店买不到？", answer: "秘书" },
+            { question: "什么水不能喝？", answer: "薪水" },
+            { question: "什么球不能踢？", answer: "火球" },
+            { question: "什么床不能睡？", answer: "牙床" },
+            { question: "什么帽不能戴？", answer: "螺帽" },
+            { question: "什么鞋不能穿？", answer: "拖鞋" },
+            { question: "什么包不能装东西？", answer: "红包" },
+            { question: "什么笔不能写字？", answer: "电笔" },
+            { question: "什么线不能缝？", answer: "光线" },
+            { question: "一口吃掉牛尾巴（打一字）", answer: "告" },
+            { question: "皇帝新衣（打一字）", answer: "袭" },
+            { question: "十分高大（打一字）", answer: "射" },
+            { question: "需要一半，留下一半（打一字）", answer: "雷" },
+            { question: "一月一日非今天（打一字）", answer: "明" },
+            { question: "守门员（打一字）", answer: "闪" },
+            { question: "另有变动（打一字）", answer: "加" },
+            { question: "半青半紫（打一字）", answer: "素" },
+            { question: "身残心不残（打一字）", answer: "息" },
+            { question: "千里相逢（打一字）", answer: "重" },
+            { question: "乘人不备（打一字）", answer: "乖" },
+            { question: "人我不分（打一字）", answer: "俄" },
+            { question: "只有姐姐，没有妹妹（打一字）", answer: "歌" },
+            { question: "有水可养鱼虾，有土可种庄稼，有人不是你我，有马走遍天下（打一字）", answer: "也" },
+            { question: "左边绿，右边红，左右相遇起凉风（打一字）", answer: "秋" },
+            { question: "一点一横长，一撇到南洋，南洋有个人，只有一寸长（打一字）", answer: "府" },
+            { question: "四面都是山，山山接相连（打一字）", answer: "田" },
+            { question: "一字十三点，难在如何点（打一字）", answer: "汁" },
+            { question: "一边一点（打一字）", answer: "卜" },
+            { question: "两人土上谈心（打一字）", answer: "坐" }
+        ];
+
+        // 当前选择的类别和题库
+let currentCategory = '';
+let currentRiddles = [];
+
+const defaultRiddles = [
+            { question: "什么东西越洗越脏？", answer: "水" },
+            { question: "什么东西打破了才能用？", answer: "鸡蛋" },
+            { question: "什么东西有头没有尾，有脚没有腿？", answer: "硬币" },
+            { question: "什么东西越擦越湿？", answer: "毛巾" },
+            { question: "什么东西有牙齿但不能咬东西？", answer: "梳子" },
+            { question: "什么东西有眼睛看不见？", answer: "针" },
+            { question: "什么东西有手不能拿？", answer: "钟表" },
+            { question: "什么东西有腿不能走路？", answer: "桌子" },
+            { question: "什么东西有嘴不说话？", answer: "瓶子" },
+            { question: "什么东西有耳朵听不见？", answer: "玉米" },
+            { question: "什么东西越热越爱出来？", answer: "汗" },
+            { question: "什么东西有四条腿，但不会走路？", answer: "椅子" },
+            { question: "什么东西有千条腿，但不会走路？", answer: "扫把" },
+            { question: "什么东西有万条腿，但不会走路？", answer: "头发" },
+            { question: "什么东西有翅膀不会飞？", answer: "飞机" },
+            { question: "什么东西有脸没有口？", answer: "时钟" },
+            { question: "什么东西有背没有骨？", answer: "书" },
+            { question: "什么东西有肚没有肠？", answer: "书包" },
+            { question: "什么东西有皮没有骨？", answer: "气球" },
+            { question: "什么东西有骨没有肉？", answer: "鱼刺" },
+            { question: "什么东西有肉没有骨？", answer: "豆腐" },
+            { question: "什么东西有血没有心？", answer: "墨水" },
+            { question: "什么东西有心没有肺？", answer: "铅笔" },
+            { question: "什么东西有家没有房？", answer: "蜗牛" },
+            { question: "什么东西有门没有锁？", answer: "冰箱" },
+            { question: "什么东西有窗没有玻璃？", answer: "电脑" },
+            { question: "什么东西有床没有被？", answer: "河床" },
+            { question: "什么东西有路没有人？", answer: "电路" },
+            { question: "什么东西有桥没有水？", answer: "鼻梁" },
+            { question: "什么东西有山没有石？", answer: "书山" },
+            { question: "什么东西有海没有水？", answer: "脑海" },
+            { question: "什么东西有火没有烟？", answer: "萤火虫" },
+            { question: "什么东西有光没有热？", answer: "月光" },
+            { question: "什么东西有声没有人？", answer: "录音" },
+            { question: "什么东西有影没有形？", answer: "影子" },
+            { question: "什么东西有味没有香？", answer: "臭味" },
+            { question: "什么东西有甜没有糖？", answer: "甜言" },
+            { question: "什么东西有苦没有药？", answer: "苦心" },
+            { question: "什么东西有酸没有醋？", answer: "心酸" },
+            { question: "什么东西有辣没有椒？", answer: "泼辣" },
+            { question: "什么东西有咸没有盐？", answer: "咸鱼" },
+            { question: "什么东西有淡没有水？", answer: "冷淡" },
+            { question: "什么东西有浓没有酒？", answer: "浓眉" },
+            { question: "什么东西有稀没有饭？", answer: "稀少" },
+            { question: "什么东西有干没有湿？", answer: "饼干" },
+            { question: "什么东西有湿没有水？", answer: "湿地" },
+            { question: "什么东西有冷没有冰？", answer: "冷眼" },
+            { question: "什么东西有热没有火？", answer: "热心" },
+            { question: "什么东西有暖没有阳？", answer: "温暖" },
+            { question: "什么东西有凉没有冰？", answer: "凉意" },
+            { question: "什么东西有温没有度？", answer: "温柔" },
+            { question: "什么东西有深没有底？", answer: "深情" },
+            { question: "什么东西有浅没有滩？", answer: "浅显" },
+            { question: "什么东西有高没有顶？", answer: "高尚" },
+            { question: "什么东西有低没有谷？", answer: "低调" },
+            { question: "什么东西有大没有小？", answer: "大方" },
+            { question: "什么东西有小没有大？", answer: "小心" },
+            { question: "什么东西有多没有少？", answer: "多少" },
+            { question: "什么东西有少没有多？", answer: "少年" },
+            { question: "什么东西有快没有慢？", answer: "快乐" },
+            { question: "什么东西有慢没有快？", answer: "慢走" },
+            { question: "什么东西有早没有晚？", answer: "早安" },
+            { question: "什么东西有晚没有早？", answer: "晚安" },
+            { question: "什么东西有新没有旧？", answer: "新年" },
+            { question: "什么东西有旧没有新？", answer: "旧友" },
+            { question: "什么东西有老没有少？", answer: "老师" },
+            { question: "什么东西有少没有老？", answer: "少女" },
+            { question: "什么东西有好没有坏？", answer: "好人" },
+            { question: "什么东西有坏没有好？", answer: "坏事" },
+            { question: "什么东西有对没有错？", answer: "对号" },
+            { question: "什么东西有错没有对？", answer: "错过" },
+            { question: "什么东西有真没有假？", answer: "真诚" },
+            { question: "什么东西有假没有真？", answer: "假期" },
+            { question: "什么东西有实没有虚？", answer: "实话" },
+            { question: "什么东西有虚没有实？", answer: "虚心" },
+            { question: "什么东西有明没有暗？", answer: "明白" },
+            { question: "什么东西有暗没有明？", answer: "暗号" },
+            { question: "什么东西有亮没有黑？", answer: "明亮" },
+            { question: "什么东西有黑没有白？", answer: "黑板" },
+            { question: "什么东西有白没有黑？", answer: "白天" },
+            { question: "什么东西有红没有绿？", answer: "红包" },
+            { question: "什么东西有绿没有红？", answer: "绿灯" },
+            { question: "什么东西有蓝没有黄？", answer: "蓝天" },
+            { question: "什么东西有黄没有蓝？", answer: "黄金" },
+            { question: "什么东西有紫没有红？", answer: "紫菜" },
+            { question: "什么东西有橙没有汁？", answer: "橙色" },
+            { question: "什么东西有青没有草？", answer: "青春" },
+            { question: "什么东西有灰没有尘？", answer: "灰色" },
+            { question: "什么东西有银没有金？", answer: "银河" },
+            { question: "什么东西有金没有银？", answer: "金色" },
+            { question: "什么东西有铜没有铁？", answer: "铜像" },
+            { question: "什么东西有铁没有钢？", answer: "铁轨" },
+            { question: "什么东西有钢没有铁？", answer: "钢琴" },
+            { question: "什么东西有木没有林？", answer: "木耳" },
+            { question: "什么东西有林没有木？", answer: "林区" },
+            { question: "什么东西有水没有河？", answer: "水果" },
+            { question: "什么东西有河没有水？", answer: "银河" },
+            { question: "什么东西有山没有峰？", answer: "山药" },
+            { question: "什么东西有峰没有山？", answer: "峰顶" },
+            { question: "什么东西有云没有雨？", answer: "云彩" },
+            { question: "什么东西有雨没有云？", answer: "雨伞" },
+            { question: "什么东西有风没有声？", answer: "风景" },
+            { question: "什么东西有声没有风？", answer: "风声" },
+            { question: "什么东西有雷没有电？", answer: "雷声" },
+            { question: "什么东西有电没有光？", answer: "电脑" },
+            { question: "什么东西有光没有电？", answer: "阳光" },
+            { question: "什么东西有冰没有雪？", answer: "冰块" },
+            { question: "什么东西有雪没有冰？", answer: "雪花" },
+            { question: "什么东西有霜没有露？", answer: "霜降" },
+            { question: "什么东西有露没有霜？", answer: "露水" },
+            { question: "什么东西有雾没有云？", answer: "雾霾" },
+            { question: "什么东西有霞没有光？", answer: "晚霞" },
+            { question: "什么东西有虹没有雨？", answer: "彩虹" },
+            { question: "什么东西有日没有月？", answer: "日记" },
+            { question: "什么东西有月没有日？", answer: "月亮" },
+            { question: "什么东西有星没有空？", answer: "星期" },
+            { question: "什么东西有空没有星？", answer: "空气" },
+            { question: "什么东西有天没有地？", answer: "天气" },
+            { question: "什么东西有地没有天？", answer: "地方" },
+            { question: "什么东西有春没有花？", answer: "春节" },
+            { question: "什么东西有夏没有热？", answer: "夏天" },
+            { question: "什么东西有秋没有叶？", answer: "秋天" },
+            { question: "什么东西有冬没有雪？", answer: "冬天" },
+            { question: "什么东西有年没有月？", answer: "年龄" },
+            { question: "什么东西有月没有年？", answer: "月亮" },
+            { question: "什么东西有日没有年？", answer: "日记" },
+            { question: "什么东西有时没有分？", answer: "时候" },
+            { question: "什么东西有分没有时？", answer: "分钟" },
+            { question: "什么东西有秒没有分？", answer: "秒表" },
+            { question: "什么东西有周没有日？", answer: "周期" },
+            { question: "什么东西有季没有月？", answer: "季节" },
+            { question: "什么东西有世没有界？", answer: "世界" },
+            { question: "什么东西有界没有线？", answer: "界限" },
+            { question: "什么东西有线没有点？", answer: "线条" },
+            { question: "什么东西有点没有线？", answer: "观点" },
+            { question: "什么东西有面没有体？", answer: "面子" },
+            { question: "什么东西有体没有面？", answer: "体验" },
+            { question: "什么东西有形没有状？", answer: "形式" },
+            { question: "什么东西有状没有形？", answer: "状态" },
+            { question: "什么东西有质没有量？", answer: "质量" },
+            { question: "什么东西有量没有质？", answer: "数量" },
+            { question: "什么东西有力没有气？", answer: "力量" },
+            { question: "什么东西有气没有力？", answer: "气味" },
+            { question: "什么东西有声没有音？", answer: "声音" },
+            { question: "什么东西有音没有声？", answer: "音乐" },
+            { question: "什么东西有字没有文？", answer: "字据" },
+            { question: "什么东西有文没有字？", answer: "文化" },
+            { question: "什么东西有句没有词？", answer: "句子" },
+            { question: "什么东西有词没有句？", answer: "词语" },
+            { question: "什么东西有段没有落？", answer: "段落" },
+            { question: "什么东西有落没有段？", answer: "落后" },
+            { question: "什么东西有章没有节？", answer: "章节" },
+            { question: "什么东西有节没有章？", answer: "节目" },
+            { question: "什么东西有本没有末？", answer: "根本" },
+            { question: "什么东西有末没有本？", answer: "末尾" },
+            { question: "什么东西有始没有终？", answer: "始终" },
+            { question: "什么东西有终没有始？", answer: "终点" },
+            { question: "什么东西有开没有关？", answer: "开心" },
+            { question: "什么东西有关没有开？", answer: "关心" },
+            { question: "什么东西有进没有出？", answer: "进步" },
+            { question: "什么东西有出没有进？", answer: "出口" },
+            { question: "什么东西有来没有去？", answer: "来往" },
+            { question: "什么东西有去没有来？", answer: "去处" },
+            { question: "什么东西有上没有下？", answer: "上级" },
+            { question: "什么东西有下没有上？", answer: "下属" },
+            { question: "什么东西有左没有右？", answer: "左手" },
+            { question: "什么东西有右没有左？", answer: "右手" },
+            { question: "什么东西有前没有后？", answer: "前面" },
+            { question: "什么东西有后没有前？", answer: "后面" },
+            { question: "什么东西有中没有边？", answer: "中间" },
+            { question: "什么东西有边没有中？", answer: "边缘" },
+            { question: "什么东西有内没有外？", answer: "内容" },
+            { question: "什么东西有外没有内？", answer: "外表" },
+            { question: "什么东西有东没有西？", answer: "东方" },
+            { question: "什么东西有西没有东？", answer: "西方" },
+            { question: "什么东西有南没有北？", answer: "南方" },
+            { question: "什么东西有北没有南？", answer: "北方" },
+            { question: "什么东西有中没四方？", answer: "中心" },
+            { question: "什么东西有古没有今？", answer: "古代" },
+            { question: "什么东西有今没有古？", answer: "今天" },
+            { question: "什么东西有远没有近？", answer: "远方" },
+            { question: "什么东西有近没有远？", answer: "近视" },
+            { question: "什么东西有高没有低？", answer: "高兴" },
+            { question: "什么东西有低没有高？", answer: "低头" },
+            { question: "什么东西有大没有小？", answer: "大学" },
+            { question: "什么东西有小没有大？", answer: "小学" },
+            { question: "什么东西有多没有少？", answer: "多余" },
+            { question: "什么东西有少没有多？", answer: "缺少" },
+            { question: "什么东西有长没有短？", answer: "长江" },
+            { question: "什么东西有短没有长？", answer: "短裤" },
+            { question: "什么东西有宽没有窄？", answer: "宽广" },
+            { question: "什么东西有窄没有宽？", answer: "狭窄" },
+            { question: "什么东西有厚没有薄？", answer: "厚道" },
+            { question: "什么东西有薄没有厚？", answer: "薄弱" },
+            { question: "什么东西有重没有轻？", answer: "重要" },
+            { question: "什么东西有轻没有重？", answer: "轻松" },
+            { question: "什么东西有快没有慢？", answer: "快餐" },
+            { question: "什么东西有慢没有快？", answer: "慢性" },
+            { question: "什么东西有早没有晚？", answer: "早晨" },
+            { question: "什么东西有晚没有早？", answer: "晚会" },
+            { question: "什么东西有春没有秋？", answer: "青春" },
+            { question: "什么东西有秋没有春？", answer: "千秋" },
+            { question: "什么东西有冬没有夏？", answer: "寒冬" },
+            { question: "什么东西有夏没有冬？", answer: "盛夏" },
+            { question: "什么东西有花没有果？", answer: "花样" },
+            { question: "什么东西有果没有花？", answer: "成果" },
+            { question: "什么东西有草没有木？", answer: "草地" },
+            { question: "什么东西有木没有草？", answer: "木头" },
+            { question: "什么东西有树没有叶？", answer: "树立" },
+            { question: "什么东西有叶没有树？", answer: "叶片" },
+            { question: "什么东西有根没有茎？", answer: "根本" },
+            { question: "什么东西有茎没有根？", answer: "茎部" },
+            { question: "什么东西有种没有苗？", answer: "种类" },
+            { question: "什么东西有苗没有种？", answer: "苗头" },
+            { question: "什么东西有田没有地？", answer: "田园" },
+            { question: "什么东西有地没有田？", answer: "地面" },
+            { question: "什么东西有园没有林？", answer: "公园" },
+            { question: "什么东西有林没有园？", answer: "林园" },
+            { question: "什么东西有山没有石？", answer: "山水" },
+            { question: "什么东西有石没有山？", answer: "石头" },
+            { question: "什么东西有水没有源？", answer: "水果" },
+            { question: "什么东西有源没有水？", answer: "源头" },
+            { question: "什么东西有河没有源？", answer: "河流" },
+            { question: "什么东西有海没有河？", answer: "海报" },
+            { question: "什么东西有湖没有海？", answer: "湖泊" },
+            { question: "什么东西有池没有塘？", answer: "池塘" },
+            { question: "什么东西有塘没有池？", answer: "池塘" },
+            { question: "什么东西有泉没有水？", answer: "温泉" },
+            { question: "什么东西有溪没有河？", answer: "溪流" },
+            { question: "什么东西有沟没有渠？", answer: "水沟" },
+            { question: "什么东西有渠没有沟？", answer: "渠道" },
+            { question: "什么东西有井没有水？", answer: "矿井" },
+            { question: "什么东西有波没有浪？", answer: "风波" },
+            { question: "什么东西有浪没有波？", answer: "浪潮" },
+            { question: "什么东西有潮没有汐？", answer: "思潮" },
+            { question: "什么东西有汐没有潮？", answer: "潮汐" },
+            { question: "什么东西有雨没有风？", answer: "雨衣" },
+            { question: "什么东西有风没有雨？", answer: "风扇" },
+            { question: "什么东西有雪没有寒？", answer: "雪白" },
+            { question: "什么东西有寒没有雪？", answer: "寒冷" },
+            { question: "什么东西有冰没有冷？", answer: "冰激凌" },
+            { question: "什么东西有冷没有冰？", answer: "冷饮" },
+            { question: "什么东西有霜没有冻？", answer: "霜糖" },
+            { question: "什么东西有冻没有霜？", answer: "果冻" },
+            { question: "什么东西有露没有珠？", answer: "露水" },
+            { question: "什么东西有珠没有露？", answer: "珍珠" },
+            { question: "什么东西有雾没有雨？", answer: "雾气" },
+            { question: "什么东西有云没有雨？", answer: "云朵" },
+            { question: "什么东西有霞没有云？", answer: "彩霞" },
+            { question: "什么东西有虹没有雨？", answer: "长虹" },
+            { question: "什么东西有雷没有雨？", answer: "地雷" },
+            { question: "什么东西有电没有光？", answer: "电池" },
+            { question: "什么东西有光没有热？", answer: "激光" },
+            { question: "什么东西有热没有光？", answer: "热情" },
+            { question: "什么东西有火没有烟？", answer: "火柴" },
+            { question: "什么东西有烟没有火？", answer: "香烟" },
+            { question: "什么东西有灰没有尘？", answer: "骨灰" },
+            { question: "什么东西有尘没有土？", answer: "灰尘" },
+            { question: "什么东西有土没有地？", answer: "土豆" },
+            { question: "什么东西有泥没有土？", answer: "泥巴" },
+            { question: "什么东西有沙没有石？", answer: "沙发" },
+            { question: "什么东西有石没有沙？", answer: "石油" },
+            { question: "什么东西有金没有银？", answer: "金子" },
+            { question: "什么东西有银没有金？", answer: "银子" },
+            { question: "什么东西有铜没有铁？", answer: "铜钱" },
+            { question: "什么东西有铁没有铜？", answer: "铁钉" },
+            { question: "什么东西有钢没有铁？", answer: "钢笔" },
+            { question: "什么东西有铝没有金？", answer: "铝箔" },
+            { question: "什么东西有锡没有铅？", answer: "锡纸" },
+            { question: "什么东西有铅没有笔？", answer: "铅笔" },
+            { question: "什么东西有锌没有铜？", answer: "锌片" },
+            { question: "什么东西有镍没有铁？", answer: "镍币" },
+            { question: "什么东西有铬没有钢？", answer: "镀铬" },
+            { question: "什么东西有锰没有铁？", answer: "锰钢" },
+            { question: "什么东西有钛没有金？", answer: "钛合金" },
+            { question: "什么东西有钨没有灯？", answer: "钨丝" },
+            { question: "什么东西有汞没有银？", answer: "汞柱" },
+            { question: "什么东西有硫没有磺？", answer: "硫酸" },
+            { question: "什么东西有磷没有火？", answer: "磷光" },
+            { question: "什么东西有碳没有墨？", answer: "碳素" },
+            { question: "什么东西有硅没有砂？", answer: "硅胶" },
+            { question: "什么东西有氧没有气？", answer: "氧气" },
+            { question: "什么东西有氢没有气？", answer: "氢气" },
+            { question: "什么东西有氮没有气？", answer: "氮气" },
+            { question: "什么东西有氦没有气？", answer: "氦气" },
+            { question: "什么东西有氖没有灯？", answer: "氖灯" },
+            { question: "什么东西有氩没有气？", answer: "氩气" },
+            { question: "什么东西有氯没有气？", answer: "氯气" },
+            { question: "什么东西有氟没有气？", answer: "氟气" },
+            { question: "什么东西有溴没有水？", answer: "溴水" },
+            { question: "什么东西有碘没有酒？", answer: "碘酒" },
+            { question: "什么东西有盐没有咸？", answer: "盐水" },
+            { question: "什么东西有糖没有甜？", answer: "糖果" },
+            { question: "什么东西有醋没有酸？", answer: "醋意" },
+            { question: "什么东西有酱没有咸？", answer: "酱油" },
+            { question: "什么东西有油没有腻？", answer: "汽油" },
+            { question: "什么东西有茶没有水？", answer: "茶叶" },
+            { question: "什么东西有酒没有醉？", answer: "酒店" },
+            { question: "什么东西有奶没有牛？", answer: "奶粉" },
+            { question: "什么东西有蛋没有鸡？", answer: "蛋糕" },
+            { question: "什么东西有肉没有骨？", answer: "肉松" },
+            { question: "什么东西有鱼没有水？", answer: "鱼干" },
+            { question: "什么东西有虾没有水？", answer: "虾米" },
+            { question: "什么东西有蟹没有壳？", answer: "蟹肉" },
+            { question: "什么东西有贝没有壳？", answer: "宝贝" },
+            { question: "什么东西有参没有药？", answer: "海参" },
+            { question: "什么东西有燕没有窝？", answer: "燕麦" },
+            { question: "什么东西有鲍没有鱼？", answer: "鲍鱼" },
+            { question: "什么东西有翅没有鸟？", answer: "鱼翅" },
+            { question: "什么东西有肚没有肠？", answer: "猪肚" },
+            { question: "什么东西有肝没有胆？", answer: "猪肝" },
+            { question: "什么东西有肺没有气？", answer: "猪肺" },
+            { question: "什么东西有肾没有水？", answer: "猪肾" },
+            { question: "什么东西有心没有血？", answer: "猪心" },
+            { question: "什么东西有肠没有胃？", answer: "香肠" },
+            { question: "什么东西有胃没有肠？", answer: "胃口" },
+            { question: "什么东西有皮没有毛？", answer: "果皮" },
+            { question: "什么东西有毛没有皮？", answer: "羽毛" },
+            { question: "什么东西有发没有头？", answer: "头发" },
+            { question: "什么东西有头没有发？", answer: "馒头" },
+            { question: "什么东西有脸没有眼？", answer: "脸面" },
+            { question: "什么东西有眼没有珠？", answer: "针眼" },
+            { question: "什么东西有眉没有毛？", answer: "眉毛" },
+            { question: "什么东西有鼻没有孔？", answer: "鼻梁" },
+            { question: "什么东西有嘴没有牙？", answer: "瓶嘴" },
+            { question: "什么东西有唇没有口？", answer: "嘴唇" },
+            { question: "什么东西有舌没有根？", answer: "舌头" },
+            { question: "什么东西有牙没有床？", answer: "牙刷" },
+            { question: "什么东西有颈没有头？", answer: "瓶颈" },
+            { question: "什么东西有肩没有手？", answer: "肩膀" },
+            { question: "什么东西有臂没有肘？", answer: "臂力" },
+            { question: "什么东西有肘没有手？", answer: "肘部" },
+            { question: "什么东西有腕没有表？", answer: "手腕" },
+            { question: "什么东西有手没有指？", answer: "手势" },
+            { question: "什么东西有指没有甲？", answer: "指尖" },
+            { question: "什么东西有甲没有壳？", answer: "指甲" },
+            { question: "什么东西有胸没有心？", answer: "胸部" },
+            { question: "什么东西有背没有骨？", answer: "背影" },
+            { question: "什么东西有腰没有带？", answer: "腰部" },
+            { question: "什么东西有腹没有肌？", answer: "腹部" },
+            { question: "什么东西有臀没有腿？", answer: "臀部" },
+            { question: "什么东西有腿没有脚？", answer: "火腿" },
+            { question: "什么东西有膝没有盖？", answer: "膝盖" },
+            { question: "什么东西有小腿没有脚？", answer: "小腿" },
+            { question: "什么东西有脚没有趾？", answer: "脚步" },
+            { question: "什么东西有趾没有甲？", answer: "脚趾" },
+            { question: "什么东西有跟没有趾？", answer: "脚跟" },
+            { question: "什么东西有掌没有指？", answer: "手掌" },
+            { question: "什么东西有拳没有指？", answer: "拳头" },
+            { question: "什么东西有指没有纹？", answer: "指示" },
+            { question: "什么东西有纹没有路？", answer: "皱纹" },
+            { question: "什么东西有路没有车？", answer: "思路" },
+            { question: "什么东西有车没有轮？", answer: "风车" },
+            { question: "什么东西有轮没有车？", answer: "车轮" },
+            { question: "什么东西有船没有水？", answer: "飞船" },
+            { question: "什么东西有飞机没有鸟？", answer: "飞机" },
+            { question: "什么东西有火车没有烟？", answer: "地铁" },
+            { question: "什么东西有汽车没有油？", answer: "电车" },
+            { question: "什么东西有单车没有人？", answer: "单车" },
+            { question: "什么东西有摩托没有油？", answer: "电动摩托" },
+            { question: "什么东西有卡车没有货？", answer: "卡车" },
+            { question: "什么东西有巴士没有站？", answer: "巴士" },
+            { question: "什么东西有出租车没有客？", answer: "出租车" },
+            { question: "什么东西有救护车没有病？", answer: "救护车" },
+            { question: "什么东西有消防车没有火？", answer: "消防车" },
+            { question: "什么东西有警车没有匪？", answer: "警车" },
+            { question: "什么东西有邮车没有信？", answer: "邮车" },
+            { question: "什么东西有货车没有客？", answer: "货车" },
+            { question: "什么东西有客车没有货？", answer: "客车" },
+            { question: "什么东西有火车没有轨？", answer: "火车" },
+            { question: "什么东西有地铁没有站？", answer: "地铁" },
+            { question: "什么东西有轻轨没有站？", answer: "轻轨" },
+            { question: "什么东西有高铁没有慢？", answer: "高铁" },
+            { question: "什么东西有动车没有站？", answer: "动车" },
+            { question: "什么东西有磁浮没有轨？", answer: "磁浮" },
+            { question: "什么东西有轮船没有桨？", answer: "轮船" },
+            { question: "什么东西有帆船没有帆？", answer: "帆船" },
+            { question: "什么东西有游艇没有客？", answer: "游艇" },
+            { question: "什么东西有货船没有货？", answer: "货船" },
+            { question: "什么东西有油船没有油？", answer: "油船" },
+            { question: "什么东西有客船没有客？", answer: "客船" },
+            { question: "什么东西有渔船没有鱼？", answer: "渔船" },
+            { question: "什么东西有军舰没有炮？", answer: "军舰" },
+            { question: "什么东西有潜艇没有水？", answer: "潜艇" },
+            { question: "什么东西有航母没有机？", answer: "航母" },
+            { question: "什么东西有驱逐舰没有炮？", answer: "驱逐舰" },
+            { question: "什么东西有巡洋舰没有炮？", answer: "巡洋舰" },
+            { question: "什么东西有护卫舰没有炮？", answer: "护卫舰" },
+            { question: "什么东西有登陆舰没有兵？", answer: "登陆舰" },
+            { question: "什么东西有补给舰没有货？", answer: "补给舰" },
+            { question: "什么东西有医院船没有病？", answer: "医院船" },
+            { question: "什么东西有科考船没有考？", answer: "科考船" },
+            { question: "什么东西有破冰船没有冰？", answer: "破冰船" },
+            { question: "什么东西有拖船没有货？", answer: "拖船" },
+            { question: "什么东西有引航船没有港？", answer: "引航船" },
+            { question: "什么东西有消防船没有火？", answer: "消防船" },
+            { question: "什么东西有打捞船没有沉？", answer: "打捞船" },
+            { question: "什么东西有起重船没有重？", answer: "起重船" },
+            { question: "什么东西有挖泥船没有泥？", answer: "挖泥船" },
+            { question: "什么东西有测量船没有测？", answer: "测量船" },
+            { question: "什么东西有训练船没有练？", answer: "训练船" }, 
+             {question:"太平洋的中间是什么？",answer:"平"},
+            { question: "什么东西有头无脚？", answer: "砖头" },
+            { question: "什么东西有脚无头？", answer: "桌子" },
+            { question: "什么东西越擦越小？", answer: "橡皮" },
+            { question: "什么东西越热越爱出来？", answer: "汗" },
+            { question: "什么东西往上升永远掉不下来？", answer: "年龄" },
+            { question: "什么东西你有我有他也有？", answer: "名字" },
+            { question: "什么东西打碎了大家都叫好？", answer: "纪录" },
+            { question: "什么东西看不到却能摸到？", answer: "风" },
+            { question: "什么东西嘴里没有舌头？", answer: "茶壶" },
+            { question: "什么东西越剪越大？", answer: "洞" },
+            { question: "什么东西有五个头但人不奇怪？", answer: "手和脚" },
+            { question: "天气越热它爬得越高的是？", answer: "温度计" },
+            { question: "什么东西用它时看不见它？", answer: "帽子" },
+            { question: "什么东西越旧人越喜欢？", answer: "老朋友" },
+            { question: "什么东西比乌鸦更讨厌？", answer: "乌鸦嘴" },
+            { question: "什么东西越洗越脏？", answer: "水" },
+            { question: "什么东西越吃越感到饿？", answer: "消化药" },
+            { question: "什么东西人们都不想要？", answer: "病" },
+            { question: "什么东西越大越没用？", answer: "破洞" },
+            { question: "天越黑越看得清的是？", answer: "星星" },
+            { question: "什么东西从来不参加劳动？", answer: "影子" },
+            { question: "什么东西有手有脚却不会走？", answer: "手套袜子" },
+            { question: "什么东西每天用却看不见？", answer: "大脑" },
+            { question: "什么东西越长越细越难过？", answer: "独木桥" },
+            { question: "什么东西左边绿右边红？", answer: "西瓜" },
+            { question: "什么东西越转越快？", answer: "陀螺" },
+            { question: "什么东西越破越好？", answer: "案件" },
+            { question: "什么东西一出生就有牙齿？", answer: "锯子" },
+            { question: "什么东西越远看越大？", answer: "近视" },
+            { question: "什么东西有眼睛看不见？", answer: "针眼" },
+            { question: "什么东西能装下整个世界？", answer: "眼球" },
+            { question: "什么东西越藏越容易被发现？", answer: "秘密" },
+            { question: "你跑得越快越追不上的是？", answer: "梦想" },
+            { question: "掉在地上不会碎的是？", answer: "影子" },
+            { question: "什么东西越用越有钱？", answer: "存钱罐" },
+            { question: "什么东西比光还快？", answer: "思想" },
+            { question: "什么东西越多越看不见？", answer: "黑暗" },
+            { question: "什么东西一碰就跑？", answer: "鼻涕" },
+            { question: "什么东西越压越扁？", answer: "弹簧" },
+            { question: "什么东西越吹越大？", answer: "气球" },
+            { question: "什么东西越摇越凉快？", answer: "扇子" },
+            { question: "什么东西越咬越多？", answer: "洞" },
+            { question: "什么东西越拖越重？", answer: "脚步" },
+            { question: "什么东西越放越小？", answer: "冰块" },
+            { question: "什么东西越靠近越看不清？", answer: "睫毛" },
+            { question: "什么东西越薄越锋利？", answer: "纸" },
+            { question: "什么东西越老越值钱？", answer: "古董" },
+            { question: "什么东西越快越慢？", answer: "时光" },
+            { question: "什么东西走路不用脚？", answer: "河流" },
+            { question: "什么东西说话不用嘴？", answer: "笔" },
+            { question: "什么东西吃饭不用嘴？", answer: "筷子" },
+            { question: "什么东西睡觉不闭眼？", answer: "鱼" },
+            { question: "什么东西走路没脚印？", answer: "影子" },
+            { question: "什么东西有腿不会跑？", answer: "桌子" },
+            { question: "什么东西有嘴不会说？", answer: "壶" },
+            { question: "什么东西有耳朵听不见？", answer: "玉米" },
+            { question: "什么东西有手不能拿？", answer: "手套" },
+            { question: "什么东西有头没有尾？", answer: "针" },
+            { question: "什么东西有尾没有头？", answer: "线" },
+            { question: "什么东西身穿白衣？", answer: "盐" },
+            { question: "什么东西黑白分明？", answer: "斑马" },
+            { question: "什么东西总跟你对着干？", answer: "镜子" },
+            { question: "什么东西越分越多？", answer: "知识" },
+            { question: "什么东西越烧越短？", answer: "蜡烛" },
+            { question: "什么东西越剥越有？", answer: "洋葱" },
+            { question: "什么东西越沉越浮？", answer: "船" },
+            { question: "什么东西越长越短？", answer: "寿命" },
+            { question: "什么东西没有重量却压垮人？", answer: "压力" },
+            { question: "什么东西没有脚却走遍天下？", answer: "信" },
+            { question: "什么东西没有翅膀却能飞？", answer: "时间" },
+            { question: "什么东西没有手却能盖房子？", answer: "蜘蛛" },
+            { question: "什么东西没有嘴却能说话？", answer: "书" },
+            { question: "什么东西没有耳朵却能听话？", answer: "电话" },
+            { question: "什么东西没有腿却能跑？", answer: "水" },
+            { question: "什么东西没有身体却有影子？", answer: "光" },
+            { question: "什么东西没有颜色却五彩缤纷？", answer: "光" },
+            { question: "什么东西没有味道却流口水？", answer: "画饼" },
+            { question: "什么东西没有声音却震耳欲聋？", answer: "沉默" },
+            { question: "什么东西没有门却能进出？", answer: "梦" },
+            { question: "什么东西没有锁却关得住？", answer: "眼睛" },
+            { question: "什么东西没有钥匙却能打开？", answer: "话" },
+            { question: "什么东西没有底却能装水？", answer: "海绵" },
+            { question: "什么东西越用越新？", answer: "脑子" },
+            { question: "什么东西越想越大？", answer: "胆子" },
+            { question: "什么东西越借越多？", answer: "书" },
+            { question: "什么东西越扔越高？", answer: "球" },
+            { question: "什么东西越捏越软？", answer: "泥" },
+            { question: "什么东西越拉越长？", answer: "橡皮筋" },
+            { question: "什么东西越叠越高？", answer: "积木" },
+            { question: "什么东西越画越小？", answer: "圈" },
+            { question: "什么东西越数越少？", answer: "寿命" },
+            { question: "偷什么不犯法？", answer: "偷笑" },
+            { question: "什么东西有城没有房？", answer: "地图" },
+            { question: "什么东西有桥没有河？", answer: "棋盘" },
+            { question: "什么东西有眼不能看？", answer: "针眼" },
+            { question: "什么东西有翅不能飞？", answer: "鸡翅" },
+            { question: "什么东西有果不能吃？", answer: "如果" },
+            { question: "什么东西有牙不刷牙？", answer: "锯子" },
+            { question: "什么门永远关不上？", answer: "球门" },
+            { question: "什么路最窄？", answer: "冤家路窄" },
+            { question: "什么桥下没水？", answer: "立交桥" },
+            { question: "什么锁没有孔？", answer: "密码锁" },
+            { question: "什么蛋不能吃？", answer: "笨蛋" },
+            { question: "什么虎不吃人？", answer: "壁虎" },
+            { question: "什么鸡没有翅膀？", answer: "田鸡" },
+            { question: "什么笔不能写字？", answer: "电笔" },
+            { question: "什么书在书店买不到？", answer: "秘书" },
+            { question: "什么水不能喝？", answer: "薪水" },
+            { question: "什么火看不见？", answer: "怒火" },
+            { question: "什么瓜不能吃？", answer: "傻瓜" },
+            { question: "什么牛不吃草？", answer: "蜗牛" },
+            { question: "什么马不吃草？", answer: "木马" },
+            { question: "什么狗不咬人？", answer: "热狗" },
+            { question: "什么猫不吃鱼？", answer: "熊猫" },
+            { question: "什么鱼不会游？", answer: "木鱼" },
+            { question: "什么鸟不会飞？", answer: "鸵鸟" },
+            { question: "什么虫不咬人？", answer: "网虫" },
+            { question: "什么花不能摘？", answer: "火花" },
+            { question: "什么树没有叶？", answer: "枯树" },
+            { question: "什么山没有石？", answer: "书山" },
+            { question: "什么河没有水？", answer: "棋盘" },
+            { question: "什么星不发光？", answer: "歌星" },
+            { question: "什么月不圆？", answer: "半月" },
+            { question: "什么云不下雨？", answer: "彩云" },
+            { question: "什么风吹不动？", answer: "台风眼" },
+            { question: "什么雨淋不湿？", answer: "枪林弹雨" },
+            { question: "什么雪不冷？", answer: "报答雪" },
+            { question: "什么霜不冻？", answer: "霜降" },
+            { question: "什么东西天气越热它越多？", answer: "汗" },
+            { question: "什么东西你跑它也跑？", answer: "影子" },
+            { question: "什么东西有腿不能走？", answer: "桌子" },
+            { question: "什么东西能吃不能碰？", answer: "亏" },
+            { question: "什么东西晚上才生出尾巴？", answer: "流星" },
+            { question: "什么东西越擦越亮？", answer: "镜子" },
+            { question: "什么东西倒立后会增加一半？", answer: "6" },
+            { question: "什么东西属于你但别人用得多？", answer: "名字" },
+            { question: "什么东西有面没有口？", answer: "硬币" },
+            { question: "什么东西有脚不能站？", answer: "桌子" },
+            { question: "什么东西有口没有牙？", answer: "河" },
+            { question: "什么东西越打越开心？", answer: "鼓" },
+            { question: "什么东西越冷越爱出来？", answer: "鼻涕" },
+            { question: "什么东西比天还高？", answer: "心" },
+            { question: "什么东西比眼还小？", answer: "眼珠" },
+            { question: "什么东西比嘴还大？", answer: "嘴大的人" },
+            { question: "什么东西比手还小？", answer: "指甲" },
+            { question: "什么东西比头还重？", answer: "心事" },
+            { question: "什么东西左边是红右边是绿？", answer: "辣椒" },
+            { question: "什么东西从头到尾都是弯的？", answer: "弓" },
+            { question: "什么东西能大能小能长能短？", answer: "影子" },
+            { question: "什么东西整年都在走但不离家？", answer: "时钟" },
+            { question: "什么东西有脚却不能走路？", answer: "床" },
+            { question: "什么东西有牙却不能咬？", answer: "梳子" },
+            { question: "什么东西有头却没有脖子？", answer: "针" },
+            { question: "什么东西能装万物却不满？", answer: "眼睛" },
+            { question: "什么东西一打破大家都高兴？", answer: "纪录" },
+            { question: "什么东西越掉越高？", answer: "雨滴" },
+            { question: "什么东西买的人知道卖的人也知道？", answer: "棺材" },
+            { question: "什么东西越晒越湿？", answer: "汗" },
+            { question: "什么东西有千只脚却站不住？", answer: "扫帚" },
+            { question: "什么东西天天来却从没真正来过？", answer: "明天" },
+            { question: "什么东西放在火中不会燃？", answer: "水" },
+            { question: "什么东西能把房间装满却不占地方？", answer: "光" },
+            { question: "什么东西越分享越多？", answer: "快乐" },
+            { question: "什么东西打不开也关不上？", answer: "话匣子" },
+            { question: "什么东西看不见摸不着但感觉得到？", answer: "温度" },
+            { question: "什么东西你不用它它就不见了？", answer: "呼吸" },
+            { question: "什么东西越近越看不清？", answer: "睫毛" },
+            { question: "什么东西越推越大？", answer: "浪" },
+            { question: "什么东西越抓越少？", answer: "沙子" },
+            { question: "什么东西越剪越长？", answer: "纸" },
+            { question: "什么东西越摔越结实？", answer: "钢" },
+            { question: "什么东西有三只眼？", answer: "红灯" },
+            { question: "什么东西有四条腿却不能走？", answer: "床" },
+            { question: "什么东西有翅膀却不能飞？", answer: "飞机" },
+            { question: "什么东西有耳朵却听不见？", answer: "锅" },
+            { question: "什么东西有嘴巴却不说话？", answer: "花瓶" },
+            { question: "什么东西天天掉却不会碎？", answer: "日落" },
+            { question: "什么东西越躲越近？", answer: "麻烦" },
+            { question: "什么东西越等越大？", answer: "债" },
+            { question: "什么东西越给越少？", answer: "寿命" },
+            { question: "什么东西越想越远？", answer: "未来" },
+            { question: "什么东西你踢它它反而亲近你？", answer: "球" },
+            { question: "什么东西能屈能伸？", answer: "弹簧" },
+            { question: "什么东西越老越好？", answer: "酒" },
+            { question: "什么东西越穷越有？", answer: "志气" },
+            { question: "什么东西越短越值钱？", answer: "命" },
+            { question: "哪个月有28天？", answer: "每月都有" },
+            { question: "什么帽不能戴？", answer: "螺帽" },
+            { question: "什么碗打不烂？", answer: "铁饭碗" },
+            { question: "什么球不能拍？", answer: "地球" },
+            { question: "什么表不能看时间？", answer: "表白" },
+            { question: "什么灯不发光？", answer: "心灯" },
+            { question: "什么镜照不出人？", answer: "眼镜片" },
+            { question: "什么琴不能弹？", answer: "口琴坏了" },
+            { question: "什么画最大？", answer: "地图" },
+            { question: "什么鞋不能穿？", answer: "马蹄" },
+            { question: "什么东西越洗越小？", answer: "肥皂" },
+            { question: "什么东西一吃就吐？", answer: "亏" },
+            { question: "什么东西买来是黑的用完是白的？", answer: "黑板" },
+            { question: "什么东西有头无脚会走路？", answer: "针" },
+            { question: "什么东西有脚无腿会跑？", answer: "钟" },
+            { question: "什么东西你丢了它也丢？", answer: "影子" },
+            { question: "什么东西借了不用还？", answer: "光" },
+            { question: "什么东西打了不疼？", answer: "哈欠" },
+            { question: "什么东西碎了比完整好？", answer: "蛋" },
+            { question: "什么东西空着比满着好？", answer: "口袋" },
+            { question: "什么东西弯了比直好？", answer: "弓" },
+            { question: "什么东西重了比轻好？", answer: "秤砣" },
+            { question: "什么东西软了比硬好？", answer: "枕头" },
+            { question: "什么东西旧了比新好？", answer: "酒" },
+            { question: "什么东西短了比长好？", answer: "寿命" },
+            { question: "什么东西粗了比细好？", answer: "绳子" },
+            { question: "什么东西少了比多好？", answer: "烦恼" },
+            { question: "什么东西暗了比亮好？", answer: "星星" },
+            { question: "什么东西冷了比热好？", answer: "冰箱" },
+            { question: "什么东西干了比湿好？", answer: "衣服" },
+            { question: "什么东西快了比慢好？", answer: "脑子" },
+            { question: "什么东西高了比低好？", answer: "成绩" },
+            { question: "什么东西深了比浅好？", answer: "友谊" },
+            { question: "什么东西远了比近好？", answer: "仇人" },
+            { question: "什么东西宽了比窄好？", answer: "心胸" },
+            { question: "什么东西厚了比薄好？", answer: "脸皮" },
+            { question: "什么东西松了比紧好？", answer: "鞋带" },
+            { question: "什么东西胖了比瘦好？", answer: "钱包" },
+            { question: "什么东西白了比黑好？", answer: "牙齿" },
+            { question: "什么东西红了比绿好？", answer: "股票" },
+            { question: "铁放在外面会生锈，那金子呢？", answer: "被偷" },
+            { question: "两个人分五个苹果怎么分最公平？", answer: "榨汁" },
+            { question: "一个人在沙滩上走路为什么回头没脚印？", answer: "倒着走" },
+            { question: "什么车寸步难行？", answer: "风车" },
+            { question: "什么桥不能走？", answer: "鼻梁" },
+            { question: "什么池没有水？", answer: "电池" },
+            { question: "什么书最薄？", answer: "说明书" },
+            { question: "什么门最难开？", answer: "窍门" },
+            { question: "什么蛋最大？", answer: "笨蛋" },
+            { question: "什么虎最小？", answer: "壁虎" },
+            { question: "什么马最快？", answer: "二维码" },
+            { question: "什么狗最瘦？", answer: "热狗" },
+            { question: "什么鱼最大？", answer: "鲸鱼" },
+            { question: "什么鸟最小？", answer: "蜂鸟" },
+            { question: "什么虫最长？", answer: "长虫" },
+            { question: "什么花最香？", answer: "火花" },
+            { question: "什么树最高？", answer: "松树" },
+            { question: "什么山最矮？", answer: "书山" },
+            { question: "什么河最短？", answer: "银河" },
+            { question: "什么星最亮？", answer: "明星" },
+            { question: "什么月最圆？", answer: "岁月" },
+            { question: "什么云最重？", answer: "乌云" },
+            { question: "什么风最冷？", answer: "耳旁风" },
+            { question: "什么雨最小？", answer: "毛毛雨" },
+            { question: "什么雪最大？", answer: "瑞雪" },
+            { question: "什么霜最多？", answer: "风霜" },
+            { question: "豆腐为什么能打伤人？", answer: "冻豆腐" },
+            { question: "布和纸怕什么？", answer: "不怕一万只怕万一" },
+            { question: "太平洋中间是什么？", answer: "平" },
+            { question: "什么水取之不尽？", answer: "口水" },
+            { question: "什么路最远？", answer: "套路" },
+            { question: "什么药最苦？", answer: "后悔药" },
+            { question: "什么圈最小？", answer: "眼圈" },
+            { question: "什么眼最多？", answer: "针眼" },
+            { question: "什么牙最长？", answer: "象牙" },
+            { question: "什么头最大？", answer: "念头" },
+            { question: "什么手最多？", answer: "歌手" },
+            { question: "什么脚最多？", answer: "注脚" },
+            { question: "什么嘴最多？", answer: "吵嘴" },
+            { question: "什么耳最多？", answer: "木耳" },
+            { question: "什么心最多？", answer: "心心相印" },
+            { question: "什么骨最硬？", answer: "硬骨头" },
+            { question: "什么皮最厚？", answer: "脸皮" },
+            { question: "什么毛最多？", answer: "汗毛" },
+            { question: "什么发最长？", answer: "白发" },
+            { question: "什么血最贵？", answer: "心血" },
+            { question: "什么气最大？", answer: "力气" },
+            { question: "什么力最小？", answer: "视力" },
+            { question: "什么光最强？", answer: "目光" },
+            { question: "什么声最大？", answer: "名声" },
+            { question: "什么影最大？", answer: "电影" },
+            { question: "什么画最贵？", answer: "名画" },
+            { question: "什么歌最长？", answer: "长歌" },
+            { question: "什么话最多？", answer: "废话" },
+            { question: "什么字最难？", answer: "难字" },
+            { question: "什么事最难？", answer: "难事" },
+            { question: "什么人最高？", answer: "高人" },
+            { question: "什么物最重？", answer: "重物" },
+            { question: "什么东西看不见摸不着但最厉害？", answer: "空气" },
+            { question: "什么东西越冷越缩？", answer: "温度计" },
+            { question: "什么东西你有我有大家有？", answer: "影子" },
+            { question: "什么东西越用越小？", answer: "橡皮" },
+            { question: "什么东西越跑越快？", answer: "时间" },
+            { question: "什么东西越说越小？", answer: "秘密" },
+            { question: "什么东西越等越长？", answer: "队伍" },
+            { question: "什么东西有嘴不说话？", answer: "茶壶" },
+            { question: "什么东西有耳听不见？", answer: "木耳" },
+            { question: "什么东西有眼看不见？", answer: "针眼" },
+            { question: "什么东西有手不拿东西？", answer: "手套" },
+            { question: "什么东西有脚不走路？", answer: "桌子" },
+            { question: "什么东西有门不关？", answer: "球门" },
+            { question: "什么东西有底不装水？", answer: "锅底" },
+            { question: "什么东西有尖不扎人？", answer: "笔尖" },
+            { question: "什么东西有边不锋利？", answer: "桌边" },
+            { question: "什么东西有面不见人？", answer: "硬币" },
+            { question: "什么东西能装下整个宇宙？", answer: "眼睛" },
+            { question: "什么东西越剪越多？", answer: "纸花" },
+            { question: "什么东西越吹越大越吹越破？", answer: "泡泡" },
+            { question: "什么东西越摇越凉？", answer: "扇子" },
+            { question: "什么东西有翅膀不会飞？", answer: "鸵鸟" },
+            { question: "什么东西有脚却不能走？", answer: "桌椅" },
+            { question: "什么东西有手却不能拿？", answer: "手套" },
+            { question: "什么东西有口却不能喝水？", answer: "瓶口" },
+            { question: "什么东西越新越没用？", answer: "旧鞋" },
+            { question: "什么东西越短越好？", answer: "寿命" },
+            { question: "什么东西越长越好？", answer: "寿命" },
+            { question: "什么东西越小越好？", answer: "毛病" },
+            { question: "什么东西越多越好？", answer: "朋友" },
+            { question: "什么东西越少越好？", answer: "敌人" },
+            { question: "什么东西越快越好？", answer: "网速" },
+            { question: "什么东西越慢越好？", answer: "衰老" },
+            { question: "什么东西越高越好？", answer: "工资" },
+            { question: "什么东西越低越好？", answer: "血压" },
+            { question: "什么东西越重越好？", answer: "分量" },
+            { question: "什么东西越轻越好？", answer: "负担" },
+            { question: "什么东西越宽越好？", answer: "心胸" },
+            { question: "什么东西越窄越好？", answer: "缺陷" },
+            { question: "什么东西越深越好？", answer: "友谊" },
+            { question: "什么东西越浅越好？", answer: "伤疤" },
+            { question: "什么东西越远越好？", answer: "烦恼" },
+            { question: "什么东西越近越好？", answer: "幸福" },
+            { question: "什么东西越真越好？", answer: "感情" },
+            { question: "什么东西越假越好？", answer: "梦" },
+            { question: "什么东西越明越好？", answer: "道理" },
+            { question: "什么东西越暗越好？", answer: "灯光" },
+            { question: "什么东西越甜越好？", answer: "生活" },
+            { question: "什么东西越苦越好？", answer: "药" },
+            { question: "什么东西越香越好？", answer: "饭菜" },
+            { question: "什么东西越臭越好？", answer: "豆腐" },
+            { question: "什么东西越软越好？", answer: "枕头" },
+            { question: "什么东西越硬越好？", answer: "骨头" },
+            { question: "什么东西越干越好？", answer: "衣服" },
+            { question: "什么东西越湿越好？", answer: "毛巾" },
+            { question: "什么东西越冷越好？", answer: "冰箱" },
+            { question: "什么东西越热越好？", answer: "火锅" },
+            { question: "什么东西越圆越好？", answer: "鸡蛋" },
+            { question: "什么东西越方越好？", answer: "豆腐" },
+            { question: "什么东西越尖越好？", answer: "针" },
+            { question: "什么东西越平越好？", answer: "路面" },
+            { question: "什么东西越弯越好？", answer: "香蕉" },
+            { question: "什么东西越直越好？", answer: "道路" },
+            { question: "什么东西越新越好？", answer: "衣服" },
+            { question: "什么东西越旧越好？", answer: "酒" },
+            { question: "什么东西越大越可怕？", answer: "洞" },
+            { question: "什么东西越小越可怕？", answer: "病毒" },
+            { question: "什么东西白天看不见？", answer: "星星" },
+            { question: "什么东西晚上看不见？", answer: "太阳" },
+            { question: "什么东西下雨才出现？", answer: "彩虹" },
+            { question: "什么东西刮风才出现？", answer: "风筝" },
+            { question: "什么东西有水才能活？", answer: "鱼" },
+            { question: "什么东西没水也能活？", answer: "骆驼" },
+            { question: "什么东西有光才能活？", answer: "植物" },
+            { question: "什么东西没光也能活？", answer: "蝙蝠" },
+            { question: "什么东西有空气才能活？", answer: "人" },
+            { question: "什么东西没空气也能活？", answer: "鱼（水里）" },
+            { question: "什么东西你不打它它不响？", answer: "鼓" },
+            { question: "什么东西你一打它就响？", answer: "钟" },
+            { question: "什么东西你一吹它就灭？", answer: "蜡烛" },
+            { question: "什么东西你一点它就亮？", answer: "灯" },
+            { question: "什么东西你一关它就黑？", answer: "灯" },
+            { question: "什么东西你一开它就亮？", answer: "灯" },
+            { question: "什么东西你一拉它就长？", answer: "橡皮筋" },
+            { question: "什么东西你一推它就倒？", answer: "多米诺" },
+            { question: "什么东西你一放它就响？", answer: "鞭炮" },
+            { question: "什么东西你一扔它就碎？", answer: "玻璃" },
+            { question: "什么东西你一摔它就裂？", answer: "鸡蛋" },
+            { question: "什么东西你一剪它就短？", answer: "绳子" },
+            { question: "什么东西你一烧它就没？", answer: "纸" },
+            { question: "什么东西你一洗它就小？", answer: "肥皂" },
+            { question: "什么东西你一吃它就没？", answer: "零食" },
+            { question: "什么东西你一喝它就没？", answer: "水" },
+            { question: "什么东西你一用它就少？", answer: "橡皮" },
+            { question: "什么东西你一写它就有？", answer: "字" },
+            { question: "什么东西你一画它就有？", answer: "画" },
+            { question: "什么东西你一说它就没？", answer: "沉默" },
+            { question: "什么东西你一想它就有？", answer: "主意" },
+            { question: "什么东西你一做它就有？", answer: "事" },
+            { question: "什么东西你一给它就多？", answer: "爱" },
+            { question: "什么东西你一拿它就少？", answer: "寿命" },
+            { question: "什么东西你一丢它就多？", answer: "垃圾" },
+            { question: "什么东西你一买它就少？", answer: "钱" },
+            { question: "什么东西你一卖它就多？", answer: "钱" },
+            { question: "什么东西你一借它就少？", answer: "信任" },
+            { question: "什么东西你一还它就多？", answer: "债" },
+            { question: "什么东西你一赢它就多？", answer: "对手" },
+            { question: "什么东西你一输它就多？", answer: "经验" },
+            { question: "什么东西你一学它就多？", answer: "知识" },
+            { question: "什么东西你一忘它就多？", answer: "烦恼" },
+            { question: "什么东西你一记它就多？", answer: "笔记" },
+            { question: "什么东西你一忘它就少？", answer: "记忆" },
+            { question: "什么东西你一练它就多？", answer: "肌肉" },
+            { question: "什么东西你一休它就多？", answer: "精力" },
+            { question: "什么东西你一动它就多？", answer: "汗" },
+            { question: "什么东西你一静它就多？", answer: "思考" },
+            { question: "什么东西你一睡它就多？", answer: "梦" },
+            { question: "什么水永远用不完？", answer: "泪水" },
+            { question: "什么桥下没水也没人？", answer: "鼻梁" },
+            { question: "老王一天吃一个蛋为啥蛋还在？", answer: "吃的鸭蛋" },
+            { question: "什么东西左边红右边绿？", answer: "辣椒" },
+            { question: "什么东西有头没有脚？", answer: "钉子" },
+            { question: "什么东西有脚没有头？", answer: "袜子" },
+            { question: "什么东西有身体没有心？", answer: "衣服" },
+            { question: "什么东西有心没有身体？", answer: "爱心" },
+            { question: "什么东西能看不能摸？", answer: "电视" },
+            { question: "什么东西能摸不能看？", answer: "盲文" },
+            { question: "什么东西能听不能看？", answer: "广播" },
+            { question: "什么东西能跑不能走？", answer: "水" },
+            { question: "什么东西能飞不能跑？", answer: "时间" },
+            { question: "什么东西能吃不能喝？", answer: "醋" },
+            { question: "什么东西越放越大？", answer: "气球" },
+            { question: "什么东西越新越差？", answer: "旧鞋" },
+            { question: "什么东西越胖越好？", answer: "钱包" },
+            { question: "什么东西越瘦越好？", answer: "身材" },
+            { question: "什么东西越高越危险？", answer: "楼层" },
+            { question: "什么东西越低越安全？", answer: "地板" },
+            { question: "什么东西越大越好？", answer: "胸怀" },
+            { question: "什么东西越贵越好？", answer: "健康" },
+            { question: "什么东西越便宜越好？", answer: "房价" },
+            { question: "什么东西越多越乱？", answer: "头发" },
+            { question: "什么东西越 old 越好？", answer: "酒" },
+            { question: "什么东西越 new 越好？", answer: "手机" },
+            { question: "铁放外面会生锈，金子呢？", answer: "被偷" },
+            { question: "两人分五个苹果最公平？", answer: "榨汁" },
+            { question: "沙滩走路回头没脚印？", answer: "倒着走" },
+            { question: "什么猫最小？", answer: "熊猫小时候" },
+            { question: "什么东西你有我有他也有，但不能共享？", answer: "身份证" },
+            { question: "什么东西越升越降？", answer: "温度计" },
+            { question: "什么东西越拉越短？", answer: "橡皮筋" },
+            { question: "什么东西越敲越响？", answer: "鼓" },
+            { question: "什么东西越埋越高？", answer: "种子" },
+            { question: "什么东西打开就关不上？", answer: "话匣子" },
+            { question: "什么东西关上就打不开？", answer: "棺材" },
+            { question: "两人分五个苹果怎么分最公平？", answer: "榨汁" },
+            { question: "沙滩走路回头没脚印为什么？", answer: "倒着走" },
+            { question: "什么东西晚上才生尾巴？", answer: "流星" },
+            { question: "什么东西倒立后增加一半？", answer: "6" },
+            { question: "什么东西整年走但不离家？", answer: "时钟" },
+            { question: "小明排队买票，前面有3人，后面有6人，这队一共有多少人？", answer: "10人" },
+            { question: "从第3层走到第8层，每相邻两层有12级台阶，一共要走多少级？", answer: "60级" },
+            { question: "一排有9盏路灯，相邻两盏相隔9米，从第一盏到最后一盏有多远？", answer: "72米" },
+            { question: "一根绳子直着剪6刀，最多能剪成几段？", answer: "7段" },
+            { question: "一张纸对折7次，叠起来一共有多少层？", answer: "128层" },
+            { question: "院子里有8只鸡和4只兔，它们一共有多少条腿？", answer: "32条" },
+            { question: "有12支点燃的蜡烛，风吹灭了3支，其他都烧完了，最后还剩几支？", answer: "3支" },
+            { question: "一年中有多少个月有28天？", answer: "12个月" },
+            { question: "三个连续整数的和是39，中间那个数是多少？", answer: "13" },
+            { question: "篮子里有15个苹果，你拿走了4个，你现在有几个苹果？", answer: "4个" },
+            { question: "5只猫在8分钟内各抓2只老鼠，一共抓了多少只？", answer: "10只" },
+            { question: "把16颗糖平均分给8个小朋友，每人能分几颗？", answer: "2颗" },
+            { question: "一本书有73页，小华每天读23页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "一排同学共24人，小丽左边有4人，右边有几人？", answer: "19人" },
+            { question: "每6个瓶盖可换1瓶饮料，手里有7个瓶盖，最多先能换几瓶？", answer: "1瓶" },
+            { question: "小狗每分钟跑4米，跑3分钟能跑多少米？", answer: "12米" },
+            { question: "抽屉里有9双颜色不同的袜子，闭眼至少拿几只，才能保证有一双同色？", answer: "10只" },
+            { question: "5支球队进行单循环赛，每两队赛一场，一共要赛多少场？", answer: "10场" },
+            { question: "13个人见面，每两个人握一次手，一共握几次？", answer: "78次" },
+            { question: "数列3，5，7……第9个数是多少？", answer: "19" },
+            { question: "时钟从4点报时到7点，每到整点按点数敲钟，共敲多少下？", answer: "22下" },
+            { question: "有4盒铅笔，每盒8支，卖出4支，还剩多少支？", answer: "28支" },
+            { question: "如果红球比蓝球多9个，红球有17个，那么蓝球有几个？", answer: "8个" },
+            { question: "小华今年10岁，2年后他几岁？", answer: "12岁" },
+            { question: "一个数先加8，再减6，结果是35，这个数原来是多少？", answer: "33" },
+            { question: "小明排队买票，前面有10人，后面有4人，这队一共有多少人？", answer: "15人" },
+            { question: "从第3层走到第9层，每相邻两层有20级台阶，一共要走多少级？", answer: "120级" },
+            { question: "一排有19盏路灯，相邻两盏相隔11米，从第一盏到最后一盏有多远？", answer: "198米" },
+            { question: "一根绳子直着剪7刀，最多能剪成几段？", answer: "8段" },
+            { question: "一张纸对折2次，叠起来一共有多少层？", answer: "4层" },
+            { question: "院子里有9只鸡和9只兔，它们一共有多少条腿？", answer: "54条" },
+            { question: "有7支点燃的蜡烛，风吹灭了3支，其他都烧完了，最后还剩几支？", answer: "3支" },
+            { question: "三个连续整数的和是114，中间那个数是多少？", answer: "38" },
+            { question: "篮子里有20个苹果，你拿走了1个，你现在有几个苹果？", answer: "1个" },
+            { question: "6只猫在3分钟内各抓2只老鼠，一共抓了多少只？", answer: "12只" },
+            { question: "把15颗糖平均分给5个小朋友，每人能分几颗？", answer: "3颗" },
+            { question: "一本书有98页，小华每天读28页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "一排同学共19人，小丽左边有5人，右边有几人？", answer: "13人" },
+            { question: "每3个瓶盖可换1瓶饮料，手里有8个瓶盖，最多先能换几瓶？", answer: "2瓶" },
+            { question: "小狗每分钟跑5米，跑3分钟能跑多少米？", answer: "15米" },
+            { question: "抽屉里有4双颜色不同的袜子，闭眼至少拿几只，才能保证有一双同色？", answer: "5只" },
+            { question: "6支球队进行单循环赛，每两队赛一场，一共要赛多少场？", answer: "15场" },
+            { question: "8个人见面，每两个人握一次手，一共握几次？", answer: "28次" },
+            { question: "数列4，6，8……第10个数是多少？", answer: "22" },
+            { question: "时钟从5点报时到8点，每到整点按点数敲钟，共敲多少下？", answer: "26下" },
+            { question: "有8盒铅笔，每盒6支，卖出9支，还剩多少支？", answer: "39支" },
+            { question: "如果红球比蓝球多2个，红球有5个，那么蓝球有几个？", answer: "3个" },
+            { question: "小华今年15岁，3年后他几岁？", answer: "18岁" },
+            { question: "一个数先加6，再减3，结果是10，这个数原来是多少？", answer: "7" },
+            { question: "小明排队买票，前面有8人，后面有13人，这队一共有多少人？", answer: "22人" },
+            { question: "从第3层走到第10层，每相邻两层有14级台阶，一共要走多少级？", answer: "98级" },
+            { question: "一排有14盏路灯，相邻两盏相隔13米，从第一盏到最后一盏有多远？", answer: "169米" },
+            { question: "一根绳子直着剪8刀，最多能剪成几段？", answer: "9段" },
+            { question: "一张纸对折3次，叠起来一共有多少层？", answer: "8层" },
+            { question: "院子里有10只鸡和5只兔，它们一共有多少条腿？", answer: "40条" },
+            { question: "有17支点燃的蜡烛，风吹灭了3支，其他都烧完了，最后还剩几支？", answer: "3支" },
+            { question: "篮子里有5个苹果，你拿走了4个，你现在有几个苹果？", answer: "4个" },
+            { question: "7只猫在4分钟内各抓2只老鼠，一共抓了多少只？", answer: "14只" },
+            { question: "把36颗糖平均分给9个小朋友，每人能分几颗？", answer: "4颗" },
+            { question: "一本书有123页，小华每天读13页，读了5天，还剩多少页？", answer: "58页" },
+            { question: "一排同学共14人，小丽左边有6人，右边有几人？", answer: "7人" },
+            { question: "每4个瓶盖可换1瓶饮料，手里有9个瓶盖，最多先能换几瓶？", answer: "2瓶" },
+            { question: "小狗每分钟跑6米，跑3分钟能跑多少米？", answer: "18米" },
+            { question: "7支球队进行单循环赛，每两队赛一场，一共要赛多少场？", answer: "21场" },
+            { question: "数列5，7，9……第11个数是多少？", answer: "25" },
+            { question: "时钟从6点报时到9点，每到整点按点数敲钟，共敲多少下？", answer: "30下" },
+            { question: "有5盒铅笔，每盒4支，卖出4支，还剩多少支？", answer: "16支" },
+            { question: "如果红球比蓝球多3个，红球有7个，那么蓝球有几个？", answer: "4个" },
+            { question: "小华今年20岁，4年后他几岁？", answer: "24岁" },
+            { question: "一个数先加4，再减7，结果是35，这个数原来是多少？", answer: "38" },
+            { question: "小明排队买票，前面有6人，后面有11人，这队一共有多少人？", answer: "18人" },
+            { question: "从第3层走到第11层，每相邻两层有8级台阶，一共要走多少级？", answer: "64级" },
+            { question: "一排有9盏路灯，相邻两盏相隔15米，从第一盏到最后一盏有多远？", answer: "120米" },
+            { question: "一根绳子直着剪9刀，最多能剪成几段？", answer: "10段" },
+            { question: "一张纸对折4次，叠起来一共有多少层？", answer: "16层" },
+            { question: "院子里有11只鸡和1只兔，它们一共有多少条腿？", answer: "26条" },
+            { question: "篮子里有10个苹果，你拿走了2个，你现在有几个苹果？", answer: "2个" },
+            { question: "8只猫在5分钟内各抓2只老鼠，一共抓了多少只？", answer: "16只" },
+            { question: "把30颗糖平均分给6个小朋友，每人能分几颗？", answer: "5颗" },
+            { question: "一本书有78页，小华每天读18页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "一排同学共39人，小丽左边有7人，右边有几人？", answer: "31人" },
+            { question: "每5个瓶盖可换1瓶饮料，手里有10个瓶盖，最多先能换几瓶？", answer: "2瓶" },
+            { question: "小狗每分钟跑7米，跑3分钟能跑多少米？", answer: "21米" },
+            { question: "8支球队进行单循环赛，每两队赛一场，一共要赛多少场？", answer: "28场" },
+            { question: "数列6，8，10……第12个数是多少？", answer: "28" },
+            { question: "时钟从1点报时到4点，每到整点按点数敲钟，共敲多少下？", answer: "10下" },
+            { question: "有9盒铅笔，每盒11支，卖出9支，还剩多少支？", answer: "90支" },
+            { question: "如果红球比蓝球多4个，红球有9个，那么蓝球有几个？", answer: "5个" },
+            { question: "小华今年25岁，5年后他几岁？", answer: "30岁" },
+            { question: "一个数先加2，再减4，结果是10，这个数原来是多少？", answer: "12" },
+            { question: "小明排队买票，前面有4人，后面有9人，这队一共有多少人？", answer: "14人" },
+            { question: "从第3层走到第6层，每相邻两层有16级台阶，一共要走多少级？", answer: "48级" },
+            { question: "一排有19盏路灯，相邻两盏相隔17米，从第一盏到最后一盏有多远？", answer: "306米" },
+            { question: "一根绳子直着剪10刀，最多能剪成几段？", answer: "11段" },
+            { question: "一张纸对折5次，叠起来一共有多少层？", answer: "32层" },
+            { question: "院子里有12只鸡和6只兔，它们一共有多少条腿？", answer: "48条" },
+            { question: "篮子里有15个苹果，你拿走了6个，你现在有几个苹果？", answer: "6个" },
+            { question: "9只猫在6分钟内各抓2只老鼠，一共抓了多少只？", answer: "18只" },
+            { question: "把18颗糖平均分给3个小朋友，每人能分几颗？", answer: "6颗" },
+            { question: "一本书有103页，小华每天读23页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "一排同学共34人，小丽左边有2人，右边有几人？", answer: "31人" },
+            { question: "每6个瓶盖可换1瓶饮料，手里有11个瓶盖，最多先能换几瓶？", answer: "1瓶" },
+            { question: "小狗每分钟跑8米，跑3分钟能跑多少米？", answer: "24米" },
+            { question: "9支球队进行单循环赛，每两队赛一场，一共要赛多少场？", answer: "36场" },
+            { question: "数列1，3，5……第5个数是多少？", answer: "9" },
+            { question: "时钟从2点报时到5点，每到整点按点数敲钟，共敲多少下？", answer: "14下" },
+            { question: "有6盒铅笔，每盒9支，卖出4支，还剩多少支？", answer: "50支" },
+            { question: "如果红球比蓝球多5个，红球有11个，那么蓝球有几个？", answer: "6个" },
+            { question: "小华今年10岁，6年后他几岁？", answer: "16岁" },
+            { question: "一个数先加9，再减8，结果是35，这个数原来是多少？", answer: "34" },
+            { question: "小明排队买票，前面有2人，后面有7人，这队一共有多少人？", answer: "10人" },
+            { question: "从第3层走到第7层，每相邻两层有10级台阶，一共要走多少级？", answer: "40级" },
+            { question: "一排有14盏路灯，相邻两盏相隔3米，从第一盏到最后一盏有多远？", answer: "39米" },
+            { question: "一根绳子直着剪11刀，最多能剪成几段？", answer: "12段" },
+            { question: "一张纸对折6次，叠起来一共有多少层？", answer: "64层" },
+            { question: "院子里有13只鸡和2只兔，它们一共有多少条腿？", answer: "34条" },
+            { question: "篮子里有20个苹果，你拿走了3个，你现在有几个苹果？", answer: "3个" },
+            { question: "2只猫在7分钟内各抓2只老鼠，一共抓了多少只？", answer: "4只" },
+            { question: "把49颗糖平均分给7个小朋友，每人能分几颗？", answer: "7颗" },
+            { question: "一本书有128页，小华每天读28页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "一排同学共29人，小丽左边有3人，右边有几人？", answer: "25人" },
+            { question: "每3个瓶盖可换1瓶饮料，手里有12个瓶盖，最多先能换几瓶？", answer: "4瓶" },
+            { question: "小狗每分钟跑9米，跑3分钟能跑多少米？", answer: "27米" },
+            { question: "10支球队进行单循环赛，每两队赛一场，一共要赛多少场？", answer: "45场" },
+            { question: "数列2，4，6……第6个数是多少？", answer: "12" },
+            { question: "时钟从3点报时到6点，每到整点按点数敲钟，共敲多少下？", answer: "18下" },
+            { question: "有3盒铅笔，每盒7支，卖出9支，还剩多少支？", answer: "12支" },
+            { question: "如果红球比蓝球多6个，红球有13个，那么蓝球有几个？", answer: "7个" },
+            { question: "小华今年15岁，7年后他几岁？", answer: "22岁" },
+            { question: "一个数先加7，再减5，结果是10，这个数原来是多少？", answer: "8" },
+            { question: "小明排队买票，前面有9人，后面有5人，这队一共有多少人？", answer: "15人" },
+            { question: "从第3层走到第8层，每相邻两层有18级台阶，一共要走多少级？", answer: "90级" },
+            { question: "一排有9盏路灯，相邻两盏相隔5米，从第一盏到最后一盏有多远？", answer: "40米" },
+            { question: "一根绳子直着剪12刀，最多能剪成几段？", answer: "13段" },
+            { question: "院子里有2只鸡和7只兔，它们一共有多少条腿？", answer: "32条" },
+            { question: "3只猫在8分钟内各抓2只老鼠，一共抓了多少只？", answer: "6只" },
+            { question: "把8颗糖平均分给4个小朋友，每人能分几颗？", answer: "2颗" },
+            { question: "一本书有83页，小华每天读13页，读了5天，还剩多少页？", answer: "18页" },
+            { question: "每4个瓶盖可换1瓶饮料，手里有13个瓶盖，最多先能换几瓶？", answer: "3瓶" },
+            { question: "小狗每分钟跑10米，跑3分钟能跑多少米？", answer: "30米" },
+            { question: "3支球队进行单循环赛，每两队赛一场，一共要赛多少场？", answer: "3场" },
+            { question: "数列3，5，7……第7个数是多少？", answer: "15" },
+            { question: "有7盒铅笔，每盒5支，卖出4支，还剩多少支？", answer: "31支" },
+            { question: "如果红球比蓝球多7个，红球有15个，那么蓝球有几个？", answer: "8个" },
+            { question: "小华今年20岁，2年后他几岁？", answer: "22岁" },
+            { question: "一个数先加5，再减2，结果是35，这个数原来是多少？", answer: "32" },
+            { question: "小明排队买票，前面有7人，后面有3人，这队一共有多少人？", answer: "11人" },
+            { question: "从第3层走到第9层，每相邻两层有12级台阶，一共要走多少级？", answer: "72级" },
+            { question: "一排有19盏路灯，相邻两盏相隔7米，从第一盏到最后一盏有多远？", answer: "126米" },
+            { question: "一根绳子直着剪13刀，最多能剪成几段？", answer: "14段" },
+            { question: "院子里有3只鸡和3只兔，它们一共有多少条腿？", answer: "18条" },
+            { question: "篮子里有10个苹果，你拿走了4个，你现在有几个苹果？", answer: "4个" },
+            { question: "4只猫在3分钟内各抓2只老鼠，一共抓了多少只？", answer: "8只" },
+            { question: "把24颗糖平均分给8个小朋友，每人能分几颗？", answer: "3颗" },
+            { question: "一本书有108页，小华每天读18页，读了5天，还剩多少页？", answer: "18页" },
+            { question: "每5个瓶盖可换1瓶饮料，手里有14个瓶盖，最多先能换几瓶？", answer: "2瓶" },
+            { question: "小狗每分钟跑11米，跑3分钟能跑多少米？", answer: "33米" },
+            { question: "4支球队进行单循环赛，每两队赛一场，一共要赛多少场？", answer: "6场" },
+            { question: "数列4，6，8……第8个数是多少？", answer: "18" },
+            { question: "有4盒铅笔，每盒12支，卖出9支，还剩多少支？", answer: "39支" },
+            { question: "如果红球比蓝球多8个，红球有11个，那么蓝球有几个？", answer: "3个" },
+            { question: "小华今年25岁，3年后他几岁？", answer: "28岁" },
+            { question: "一个数先加3，再减6，结果是10，这个数原来是多少？", answer: "13" },
+            { question: "小明排队买票，前面有5人，后面有12人，这队一共有多少人？", answer: "18人" },
+            { question: "从第3层走到第10层，每相邻两层有20级台阶，一共要走多少级？", answer: "140级" },
+            { question: "一排有14盏路灯，相邻两盏相隔9米，从第一盏到最后一盏有多远？", answer: "117米" },
+            { question: "一根绳子直着剪2刀，最多能剪成几段？", answer: "3段" },
+            { question: "院子里有4只鸡和8只兔，它们一共有多少条腿？", answer: "40条" },
+            { question: "篮子里有15个苹果，你拿走了1个，你现在有几个苹果？", answer: "1个" },
+            { question: "5只猫在4分钟内各抓2只老鼠，一共抓了多少只？", answer: "10只" },
+            { question: "把20颗糖平均分给5个小朋友，每人能分几颗？", answer: "4颗" },
+            { question: "一本书有63页，小华每天读23页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "每6个瓶盖可换1瓶饮料，手里有15个瓶盖，最多先能换几瓶？", answer: "2瓶" },
+            { question: "数列5，7，9……第9个数是多少？", answer: "21" },
+            { question: "有8盒铅笔，每盒10支，卖出4支，还剩多少支？", answer: "76支" },
+            { question: "如果红球比蓝球多9个，红球有13个，那么蓝球有几个？", answer: "4个" },
+            { question: "小华今年10岁，4年后他几岁？", answer: "14岁" },
+            { question: "一个数先加1，再减3，结果是35，这个数原来是多少？", answer: "37" },
+            { question: "小明排队买票，前面有3人，后面有10人，这队一共有多少人？", answer: "14人" },
+            { question: "从第3层走到第11层，每相邻两层有14级台阶，一共要走多少级？", answer: "112级" },
+            { question: "一排有9盏路灯，相邻两盏相隔11米，从第一盏到最后一盏有多远？", answer: "88米" },
+            { question: "一根绳子直着剪3刀，最多能剪成几段？", answer: "4段" },
+            { question: "院子里有5只鸡和4只兔，它们一共有多少条腿？", answer: "26条" },
+            { question: "篮子里有20个苹果，你拿走了5个，你现在有几个苹果？", answer: "5个" },
+            { question: "6只猫在5分钟内各抓2只老鼠，一共抓了多少只？", answer: "12只" },
+            { question: "把45颗糖平均分给9个小朋友，每人能分几颗？", answer: "5颗" },
+            { question: "一本书有88页，小华每天读28页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "每3个瓶盖可换1瓶饮料，手里有4个瓶盖，最多先能换几瓶？", answer: "1瓶" },
+            { question: "数列6，8，10……第10个数是多少？", answer: "24" },
+            { question: "有5盒铅笔，每盒8支，卖出9支，还剩多少支？", answer: "31支" },
+            { question: "如果红球比蓝球多2个，红球有7个，那么蓝球有几个？", answer: "5个" },
+            { question: "小华今年15岁，5年后他几岁？", answer: "20岁" },
+            { question: "一个数先加8，再减7，结果是10，这个数原来是多少？", answer: "9" },
+            { question: "小明排队买票，前面有10人，后面有8人，这队一共有多少人？", answer: "19人" },
+            { question: "从第3层走到第6层，每相邻两层有8级台阶，一共要走多少级？", answer: "24级" },
+            { question: "一排有19盏路灯，相邻两盏相隔13米，从第一盏到最后一盏有多远？", answer: "234米" },
+            { question: "一根绳子直着剪4刀，最多能剪成几段？", answer: "5段" },
+            { question: "院子里有6只鸡和9只兔，它们一共有多少条腿？", answer: "48条" },
+            { question: "篮子里有5个苹果，你拿走了2个，你现在有几个苹果？", answer: "2个" },
+            { question: "7只猫在6分钟内各抓2只老鼠，一共抓了多少只？", answer: "14只" },
+            { question: "把36颗糖平均分给6个小朋友，每人能分几颗？", answer: "6颗" },
+            { question: "一本书有113页，小华每天读13页，读了5天，还剩多少页？", answer: "48页" },
+            { question: "每4个瓶盖可换1瓶饮料，手里有5个瓶盖，最多先能换几瓶？", answer: "1瓶" },
+            { question: "数列1，3，5……第11个数是多少？", answer: "21" },
+            { question: "有9盒铅笔，每盒6支，卖出4支，还剩多少支？", answer: "50支" },
+            { question: "如果红球比蓝球多3个，红球有9个，那么蓝球有几个？", answer: "6个" },
+            { question: "小华今年20岁，6年后他几岁？", answer: "26岁" },
+            { question: "一个数先加6，再减4，结果是35，这个数原来是多少？", answer: "33" },
+            { question: "小明排队买票，前面有8人，后面有6人，这队一共有多少人？", answer: "15人" },
+            { question: "从第3层走到第7层，每相邻两层有16级台阶，一共要走多少级？", answer: "64级" },
+            { question: "一排有14盏路灯，相邻两盏相隔15米，从第一盏到最后一盏有多远？", answer: "195米" },
+            { question: "一根绳子直着剪5刀，最多能剪成几段？", answer: "6段" },
+            { question: "院子里有7只鸡和5只兔，它们一共有多少条腿？", answer: "34条" },
+            { question: "篮子里有10个苹果，你拿走了6个，你现在有几个苹果？", answer: "6个" },
+            { question: "8只猫在7分钟内各抓2只老鼠，一共抓了多少只？", answer: "16只" },
+            { question: "把21颗糖平均分给3个小朋友，每人能分几颗？", answer: "7颗" },
+            { question: "一本书有68页，小华每天读18页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "每5个瓶盖可换1瓶饮料，手里有6个瓶盖，最多先能换几瓶？", answer: "1瓶" },
+            { question: "数列2，4，6……第12个数是多少？", answer: "24" },
+            { question: "有6盒铅笔，每盒4支，卖出9支，还剩多少支？", answer: "15支" },
+            { question: "如果红球比蓝球多4个，红球有11个，那么蓝球有几个？", answer: "7个" },
+            { question: "小华今年25岁，7年后他几岁？", answer: "32岁" },
+            { question: "一个数先加4，再减8，结果是10，这个数原来是多少？", answer: "14" },
+            { question: "小明排队买票，前面有6人，后面有4人，这队一共有多少人？", answer: "11人" },
+            { question: "从第3层走到第8层，每相邻两层有10级台阶，一共要走多少级？", answer: "50级" },
+            { question: "一排有9盏路灯，相邻两盏相隔17米，从第一盏到最后一盏有多远？", answer: "136米" },
+            { question: "院子里有8只鸡和1只兔，它们一共有多少条腿？", answer: "20条" },
+            { question: "篮子里有15个苹果，你拿走了3个，你现在有几个苹果？", answer: "3个" },
+            { question: "9只猫在8分钟内各抓2只老鼠，一共抓了多少只？", answer: "18只" },
+            { question: "把14颗糖平均分给7个小朋友，每人能分几颗？", answer: "2颗" },
+            { question: "一本书有93页，小华每天读23页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "数列3，5，7……第5个数是多少？", answer: "11" },
+            { question: "有3盒铅笔，每盒11支，卖出4支，还剩多少支？", answer: "29支" },
+            { question: "如果红球比蓝球多5个，红球有13个，那么蓝球有几个？", answer: "8个" },
+            { question: "一个数先加2，再减5，结果是35，这个数原来是多少？", answer: "38" },
+            { question: "小明排队买票，前面有4人，后面有13人，这队一共有多少人？", answer: "18人" },
+            { question: "从第3层走到第9层，每相邻两层有18级台阶，一共要走多少级？", answer: "108级" },
+            { question: "一排有19盏路灯，相邻两盏相隔3米，从第一盏到最后一盏有多远？", answer: "54米" },
+            { question: "院子里有9只鸡和6只兔，它们一共有多少条腿？", answer: "42条" },
+            { question: "篮子里有20个苹果，你拿走了7个，你现在有几个苹果？", answer: "7个" },
+            { question: "2只猫在3分钟内各抓2只老鼠，一共抓了多少只？", answer: "4只" },
+            { question: "把12颗糖平均分给4个小朋友，每人能分几颗？", answer: "3颗" },
+            { question: "一本书有118页，小华每天读28页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "数列4，6，8……第6个数是多少？", answer: "14" },
+            { question: "有7盒铅笔，每盒9支，卖出9支，还剩多少支？", answer: "54支" },
+            { question: "如果红球比蓝球多6个，红球有9个，那么蓝球有几个？", answer: "3个" },
+            { question: "一个数先加9，再减2，结果是10，这个数原来是多少？", answer: "3" },
+            { question: "小明排队买票，前面有2人，后面有11人，这队一共有多少人？", answer: "14人" },
+            { question: "从第3层走到第10层，每相邻两层有12级台阶，一共要走多少级？", answer: "84级" },
+            { question: "一排有14盏路灯，相邻两盏相隔5米，从第一盏到最后一盏有多远？", answer: "65米" },
+            { question: "院子里有10只鸡和2只兔，它们一共有多少条腿？", answer: "28条" },
+            { question: "3只猫在4分钟内各抓2只老鼠，一共抓了多少只？", answer: "6只" },
+            { question: "把32颗糖平均分给8个小朋友，每人能分几颗？", answer: "4颗" },
+            { question: "一本书有73页，小华每天读13页，读了5天，还剩多少页？", answer: "8页" },
+            { question: "数列5，7，9……第7个数是多少？", answer: "17" },
+            { question: "有4盒铅笔，每盒7支，卖出4支，还剩多少支？", answer: "24支" },
+            { question: "如果红球比蓝球多7个，红球有11个，那么蓝球有几个？", answer: "4个" },
+            { question: "一个数先加7，再减6，结果是35，这个数原来是多少？", answer: "34" },
+            { question: "小明排队买票，前面有9人，后面有9人，这队一共有多少人？", answer: "19人" },
+            { question: "从第3层走到第11层，每相邻两层有20级台阶，一共要走多少级？", answer: "160级" },
+            { question: "一排有9盏路灯，相邻两盏相隔7米，从第一盏到最后一盏有多远？", answer: "56米" },
+            { question: "院子里有11只鸡和7只兔，它们一共有多少条腿？", answer: "50条" },
+            { question: "篮子里有10个苹果，你拿走了1个，你现在有几个苹果？", answer: "1个" },
+            { question: "4只猫在5分钟内各抓2只老鼠，一共抓了多少只？", answer: "8只" },
+            { question: "把25颗糖平均分给5个小朋友，每人能分几颗？", answer: "5颗" },
+            { question: "一本书有98页，小华每天读18页，读了5天，还剩多少页？", answer: "8页" },
+            { question: "数列6，8，10……第8个数是多少？", answer: "20" },
+            { question: "有8盒铅笔，每盒5支，卖出9支，还剩多少支？", answer: "31支" },
+            { question: "如果红球比蓝球多8个，红球有13个，那么蓝球有几个？", answer: "5个" },
+            { question: "一个数先加5，再减3，结果是10，这个数原来是多少？", answer: "8" },
+            { question: "小明排队买票，前面有7人，后面有7人，这队一共有多少人？", answer: "15人" },
+            { question: "从第3层走到第6层，每相邻两层有14级台阶，一共要走多少级？", answer: "42级" },
+            { question: "一排有19盏路灯，相邻两盏相隔9米，从第一盏到最后一盏有多远？", answer: "162米" },
+            { question: "院子里有12只鸡和3只兔，它们一共有多少条腿？", answer: "36条" },
+            { question: "篮子里有15个苹果，你拿走了5个，你现在有几个苹果？", answer: "5个" },
+            { question: "5只猫在6分钟内各抓2只老鼠，一共抓了多少只？", answer: "10只" },
+            { question: "把54颗糖平均分给9个小朋友，每人能分几颗？", answer: "6颗" },
+            { question: "一本书有123页，小华每天读23页，读了5天，还剩多少页？", answer: "8页" },
+            { question: "数列1，3，5……第9个数是多少？", answer: "17" },
+            { question: "有5盒铅笔，每盒12支，卖出4支，还剩多少支？", answer: "56支" },
+            { question: "如果红球比蓝球多9个，红球有15个，那么蓝球有几个？", answer: "6个" },
+            { question: "一个数先加3，再减7，结果是35，这个数原来是多少？", answer: "39" },
+            { question: "小明排队买票，前面有5人，后面有5人，这队一共有多少人？", answer: "11人" },
+            { question: "从第3层走到第7层，每相邻两层有8级台阶，一共要走多少级？", answer: "32级" },
+            { question: "一排有14盏路灯，相邻两盏相隔11米，从第一盏到最后一盏有多远？", answer: "143米" },
+            { question: "院子里有13只鸡和8只兔，它们一共有多少条腿？", answer: "58条" },
+            { question: "篮子里有20个苹果，你拿走了2个，你现在有几个苹果？", answer: "2个" },
+            { question: "6只猫在7分钟内各抓2只老鼠，一共抓了多少只？", answer: "12只" },
+            { question: "把42颗糖平均分给6个小朋友，每人能分几颗？", answer: "7颗" },
+            { question: "一本书有78页，小华每天读28页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "数列2，4，6……第10个数是多少？", answer: "20" },
+            { question: "有9盒铅笔，每盒10支，卖出9支，还剩多少支？", answer: "81支" },
+            { question: "如果红球比蓝球多2个，红球有9个，那么蓝球有几个？", answer: "7个" },
+            { question: "一个数先加1，再减4，结果是10，这个数原来是多少？", answer: "13" },
+            { question: "小明排队买票，前面有3人，后面有3人，这队一共有多少人？", answer: "7人" },
+            { question: "从第3层走到第8层，每相邻两层有16级台阶，一共要走多少级？", answer: "80级" },
+            { question: "一排有9盏路灯，相邻两盏相隔13米，从第一盏到最后一盏有多远？", answer: "104米" },
+            { question: "院子里有2只鸡和4只兔，它们一共有多少条腿？", answer: "20条" },
+            { question: "7只猫在8分钟内各抓2只老鼠，一共抓了多少只？", answer: "14只" },
+            { question: "把6颗糖平均分给3个小朋友，每人能分几颗？", answer: "2颗" },
+            { question: "一本书有103页，小华每天读13页，读了5天，还剩多少页？", answer: "38页" },
+            { question: "数列3，5，7……第11个数是多少？", answer: "23" },
+            { question: "有6盒铅笔，每盒8支，卖出4支，还剩多少支？", answer: "44支" },
+            { question: "如果红球比蓝球多3个，红球有11个，那么蓝球有几个？", answer: "8个" },
+            { question: "一个数先加8，再减8，结果是35，这个数原来是多少？", answer: "35" },
+            { question: "小明排队买票，前面有10人，后面有12人，这队一共有多少人？", answer: "23人" },
+            { question: "从第3层走到第9层，每相邻两层有10级台阶，一共要走多少级？", answer: "60级" },
+            { question: "一排有19盏路灯，相邻两盏相隔15米，从第一盏到最后一盏有多远？", answer: "270米" },
+            { question: "院子里有3只鸡和9只兔，它们一共有多少条腿？", answer: "42条" },
+            { question: "篮子里有10个苹果，你拿走了3个，你现在有几个苹果？", answer: "3个" },
+            { question: "8只猫在3分钟内各抓2只老鼠，一共抓了多少只？", answer: "16只" },
+            { question: "把21颗糖平均分给7个小朋友，每人能分几颗？", answer: "3颗" },
+            { question: "一本书有128页，小华每天读18页，读了5天，还剩多少页？", answer: "38页" },
+            { question: "数列4，6，8……第12个数是多少？", answer: "26" },
+            { question: "有3盒铅笔，每盒6支，卖出9支，还剩多少支？", answer: "9支" },
+            { question: "如果红球比蓝球多4个，红球有7个，那么蓝球有几个？", answer: "3个" },
+            { question: "一个数先加6，再减5，结果是10，这个数原来是多少？", answer: "9" },
+            { question: "小明排队买票，前面有8人，后面有10人，这队一共有多少人？", answer: "19人" },
+            { question: "从第3层走到第10层，每相邻两层有18级台阶，一共要走多少级？", answer: "126级" },
+            { question: "一排有14盏路灯，相邻两盏相隔17米，从第一盏到最后一盏有多远？", answer: "221米" },
+            { question: "院子里有4只鸡和5只兔，它们一共有多少条腿？", answer: "28条" },
+            { question: "篮子里有15个苹果，你拿走了7个，你现在有几个苹果？", answer: "7个" },
+            { question: "9只猫在4分钟内各抓2只老鼠，一共抓了多少只？", answer: "18只" },
+            { question: "把16颗糖平均分给4个小朋友，每人能分几颗？", answer: "4颗" },
+            { question: "一本书有83页，小华每天读23页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "数列5，7，9……第5个数是多少？", answer: "13" },
+            { question: "有7盒铅笔，每盒4支，卖出4支，还剩多少支？", answer: "24支" },
+            { question: "如果红球比蓝球多5个，红球有9个，那么蓝球有几个？", answer: "4个" },
+            { question: "一个数先加4，再减2，结果是35，这个数原来是多少？", answer: "33" },
+            { question: "小明排队买票，前面有6人，后面有8人，这队一共有多少人？", answer: "15人" },
+            { question: "从第3层走到第11层，每相邻两层有12级台阶，一共要走多少级？", answer: "96级" },
+            { question: "一排有9盏路灯，相邻两盏相隔3米，从第一盏到最后一盏有多远？", answer: "24米" },
+            { question: "院子里有5只鸡和1只兔，它们一共有多少条腿？", answer: "14条" },
+            { question: "篮子里有20个苹果，你拿走了4个，你现在有几个苹果？", answer: "4个" },
+            { question: "2只猫在5分钟内各抓2只老鼠，一共抓了多少只？", answer: "4只" },
+            { question: "把40颗糖平均分给8个小朋友，每人能分几颗？", answer: "5颗" },
+            { question: "一本书有108页，小华每天读28页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "数列6，8，10……第6个数是多少？", answer: "16" },
+            { question: "有4盒铅笔，每盒11支，卖出9支，还剩多少支？", answer: "35支" },
+            { question: "如果红球比蓝球多6个，红球有11个，那么蓝球有几个？", answer: "5个" },
+            { question: "一个数先加2，再减6，结果是10，这个数原来是多少？", answer: "14" },
+            { question: "小明排队买票，前面有4人，后面有6人，这队一共有多少人？", answer: "11人" },
+            { question: "从第3层走到第6层，每相邻两层有20级台阶，一共要走多少级？", answer: "60级" },
+            { question: "一排有19盏路灯，相邻两盏相隔5米，从第一盏到最后一盏有多远？", answer: "90米" },
+            { question: "院子里有6只鸡和6只兔，它们一共有多少条腿？", answer: "36条" },
+            { question: "篮子里有5个苹果，你拿走了1个，你现在有几个苹果？", answer: "1个" },
+            { question: "3只猫在6分钟内各抓2只老鼠，一共抓了多少只？", answer: "6只" },
+            { question: "把30颗糖平均分给5个小朋友，每人能分几颗？", answer: "6颗" },
+            { question: "一本书有63页，小华每天读13页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "数列1，3，5……第7个数是多少？", answer: "13" },
+            { question: "有8盒铅笔，每盒9支，卖出4支，还剩多少支？", answer: "68支" },
+            { question: "如果红球比蓝球多7个，红球有13个，那么蓝球有几个？", answer: "6个" },
+            { question: "一个数先加9，再减3，结果是35，这个数原来是多少？", answer: "29" },
+            { question: "小明排队买票，前面有2人，后面有4人，这队一共有多少人？", answer: "7人" },
+            { question: "从第3层走到第7层，每相邻两层有14级台阶，一共要走多少级？", answer: "56级" },
+            { question: "一排有14盏路灯，相邻两盏相隔7米，从第一盏到最后一盏有多远？", answer: "91米" },
+            { question: "院子里有7只鸡和2只兔，它们一共有多少条腿？", answer: "22条" },
+            { question: "篮子里有10个苹果，你拿走了5个，你现在有几个苹果？", answer: "5个" },
+            { question: "4只猫在7分钟内各抓2只老鼠，一共抓了多少只？", answer: "8只" },
+            { question: "把63颗糖平均分给9个小朋友，每人能分几颗？", answer: "7颗" },
+            { question: "一本书有88页，小华每天读18页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "数列2，4，6……第8个数是多少？", answer: "16" },
+            { question: "有5盒铅笔，每盒7支，卖出9支，还剩多少支？", answer: "26支" },
+            { question: "如果红球比蓝球多8个，红球有15个，那么蓝球有几个？", answer: "7个" },
+            { question: "一个数先加7，再减7，结果是10，这个数原来是多少？", answer: "10" },
+            { question: "小明排队买票，前面有9人，后面有13人，这队一共有多少人？", answer: "23人" },
+            { question: "从第3层走到第8层，每相邻两层有8级台阶，一共要走多少级？", answer: "40级" },
+            { question: "院子里有8只鸡和7只兔，它们一共有多少条腿？", answer: "44条" },
+            { question: "篮子里有15个苹果，你拿走了2个，你现在有几个苹果？", answer: "2个" },
+            { question: "把12颗糖平均分给6个小朋友，每人能分几颗？", answer: "2颗" },
+            { question: "一本书有113页，小华每天读23页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "有9盒铅笔，每盒5支，卖出4支，还剩多少支？", answer: "41支" },
+            { question: "一个数先加5，再减4，结果是35，这个数原来是多少？", answer: "34" },
+            { question: "小明排队买票，前面有7人，后面有11人，这队一共有多少人？", answer: "19人" },
+            { question: "从第3层走到第9层，每相邻两层有16级台阶，一共要走多少级？", answer: "96级" },
+            { question: "院子里有9只鸡和3只兔，它们一共有多少条腿？", answer: "30条" },
+            { question: "篮子里有20个苹果，你拿走了6个，你现在有几个苹果？", answer: "6个" },
+            { question: "把9颗糖平均分给3个小朋友，每人能分几颗？", answer: "3颗" },
+            { question: "一本书有68页，小华每天读28页，读了5天，还剩多少页？", answer: "0页" },
+            { question: "有6盒铅笔，每盒12支，卖出9支，还剩多少支？", answer: "63支" },
+            { question: "一个数先加3，再减8，结果是10，这个数原来是多少？", answer: "15" },
+            { question: "小明排队买票，前面有5人，后面有9人，这队一共有多少人？", answer: "15人" },
+            { question: "从第3层走到第10层，每相邻两层有10级台阶，一共要走多少级？", answer: "70级" },
+            { question: "院子里有10只鸡和8只兔，它们一共有多少条腿？", answer: "52条" },
+            { question: "篮子里有5个苹果，你拿走了3个，你现在有几个苹果？", answer: "3个" },
+            { question: "把28颗糖平均分给7个小朋友，每人能分几颗？", answer: "4颗" },
+            { question: "一本书有93页，小华每天读13页，读了5天，还剩多少页？", answer: "28页" },
+            { question: "有3盒铅笔，每盒10支，卖出4支，还剩多少支？", answer: "26支" },
+            { question: "一个数先加1，再减5，结果是35，这个数原来是多少？", answer: "39" },
+            { question: "小明排队买票，前面有3人，后面有7人，这队一共有多少人？", answer: "11人" },
+            { question: "从第3层走到第11层，每相邻两层有18级台阶，一共要走多少级？", answer: "144级" },
+            { question: "院子里有11只鸡和4只兔，它们一共有多少条腿？", answer: "38条" },
+            { question: "篮子里有10个苹果，你拿走了7个，你现在有几个苹果？", answer: "7个" },
+            { question: "把20颗糖平均分给4个小朋友，每人能分几颗？", answer: "5颗" },
+            { question: "一本书有118页，小华每天读18页，读了5天，还剩多少页？", answer: "28页" },
+            { question: "有7盒铅笔，每盒8支，卖出9支，还剩多少支？", answer: "47支" },
+            { question: "一个数先加8，再减2，结果是10，这个数原来是多少？", answer: "4" },
+            { question: "小明排队买票，前面有10人，后面有5人，这队一共有多少人？", answer: "16人" },
+            { question: "从第3层走到第6层，每相邻两层有12级台阶，一共要走多少级？", answer: "36级" },
+            { question: "院子里有12只鸡和9只兔，它们一共有多少条腿？", answer: "60条" },
+            { question: "把48颗糖平均分给8个小朋友，每人能分几颗？", answer: "6颗" },
+            { question: "有4盒铅笔，每盒6支，卖出4支，还剩多少支？", answer: "20支" },
+            { question: "一个数先加6，再减6，结果是35，这个数原来是多少？", answer: "35" },
+            { question: "小明排队买票，前面有8人，后面有3人，这队一共有多少人？", answer: "12人" },
+            { question: "从第3层走到第7层，每相邻两层有20级台阶，一共要走多少级？", answer: "80级" },
+            { question: "院子里有13只鸡和5只兔，它们一共有多少条腿？", answer: "46条" },
+            { question: "把35颗糖平均分给5个小朋友，每人能分几颗？", answer: "7颗" },
+            { question: "有8盒铅笔，每盒4支，卖出9支，还剩多少支？", answer: "23支" },
+            { question: "一个数先加4，再减3，结果是10，这个数原来是多少？", answer: "9" },
+            { question: "小明排队买票，前面有6人，后面有12人，这队一共有多少人？", answer: "19人" },
+            { question: "从第3层走到第8层，每相邻两层有14级台阶，一共要走多少级？", answer: "70级" },
+            { question: "院子里有2只鸡和1只兔，它们一共有多少条腿？", answer: "8条" },
+            { question: "把18颗糖平均分给9个小朋友，每人能分几颗？", answer: "2颗" },
+            { question: "有5盒铅笔，每盒11支，卖出4支，还剩多少支？", answer: "51支" },
+            { question: "一个数先加2，再减7，结果是35，这个数原来是多少？", answer: "40" },
+            { question: "小明排队买票，前面有4人，后面有10人，这队一共有多少人？", answer: "15人" },
+            { question: "从第3层走到第9层，每相邻两层有8级台阶，一共要走多少级？", answer: "48级" },
+            { question: "院子里有3只鸡和6只兔，它们一共有多少条腿？", answer: "30条" },
+            { question: "把18颗糖平均分给6个小朋友，每人能分几颗？", answer: "3颗" },
+            { question: "有9盒铅笔，每盒9支，卖出9支，还剩多少支？", answer: "72支" },
+            { question: "一个数先加9，再减4，结果是10，这个数原来是多少？", answer: "5" },
+            { question: "小明排队买票，前面有2人，后面有8人，这队一共有多少人？", answer: "11人" },
+            { question: "从第3层走到第10层，每相邻两层有16级台阶，一共要走多少级？", answer: "112级" },
+            { question: "院子里有4只鸡和2只兔，它们一共有多少条腿？", answer: "16条" },
+            { question: "把12颗糖平均分给3个小朋友，每人能分几颗？", answer: "4颗" },
+            { question: "有6盒铅笔，每盒7支，卖出4支，还剩多少支？", answer: "38支" },
+            { question: "一个数先加7，再减8，结果是35，这个数原来是多少？", answer: "36" },
+            { question: "小明排队买票，前面有9人，后面有6人，这队一共有多少人？", answer: "16人" },
+            { question: "从第3层走到第11层，每相邻两层有10级台阶，一共要走多少级？", answer: "80级" },
+            { question: "院子里有5只鸡和7只兔，它们一共有多少条腿？", answer: "38条" },
+            { question: "把35颗糖平均分给7个小朋友，每人能分几颗？", answer: "5颗" },
+            { question: "有3盒铅笔，每盒5支，卖出9支，还剩多少支？", answer: "6支" },
+            { question: "一个数先加5，再减5，结果是10，这个数原来是多少？", answer: "10" },
+            { question: "小明排队买票，前面有7人，后面有4人，这队一共有多少人？", answer: "12人" },
+            { question: "从第3层走到第6层，每相邻两层有18级台阶，一共要走多少级？", answer: "54级" },
+            { question: "院子里有6只鸡和3只兔，它们一共有多少条腿？", answer: "24条" },
+            { question: "把24颗糖平均分给4个小朋友，每人能分几颗？", answer: "6颗" },
+            { question: "有7盒铅笔，每盒12支，卖出4支，还剩多少支？", answer: "80支" },
+            { question: "一个数先加3，再减2，结果是35，这个数原来是多少？", answer: "34" },
+            { question: "小明排队买票，前面有5人，后面有13人，这队一共有多少人？", answer: "19人" },
+            { question: "从第3层走到第7层，每相邻两层有12级台阶，一共要走多少级？", answer: "48级" },
+            { question: "院子里有7只鸡和8只兔，它们一共有多少条腿？", answer: "46条" },
+            { question: "把56颗糖平均分给8个小朋友，每人能分几颗？", answer: "7颗" },
+            { question: "有4盒铅笔，每盒10支，卖出9支，还剩多少支？", answer: "31支" },
+            { question: "一个数先加1，再减6，结果是10，这个数原来是多少？", answer: "15" },
+            { question: "小明排队买票，前面有3人，后面有11人，这队一共有多少人？", answer: "15人" },
+            { question: "从第3层走到第8层，每相邻两层有20级台阶，一共要走多少级？", answer: "100级" },
+            { question: "把10颗糖平均分给5个小朋友，每人能分几颗？", answer: "2颗" },
+            { question: "有8盒铅笔，每盒8支，卖出4支，还剩多少支？", answer: "60支" },
+            { question: "一个数先加8，再减3，结果是35，这个数原来是多少？", answer: "30" },
+            { question: "小明排队买票，前面有10人，后面有9人，这队一共有多少人？", answer: "20人" },
+            { question: "从第3层走到第9层，每相邻两层有14级台阶，一共要走多少级？", answer: "84级" },
+            { question: "把27颗糖平均分给9个小朋友，每人能分几颗？", answer: "3颗" },
+            { question: "有5盒铅笔，每盒6支，卖出9支，还剩多少支？", answer: "21支" },
+            { question: "一个数先加6，再减7，结果是10，这个数原来是多少？", answer: "11" },
+            { question: "小明排队买票，前面有8人，后面有7人，这队一共有多少人？", answer: "16人" },
+            { question: "从第3层走到第10层，每相邻两层有8级台阶，一共要走多少级？", answer: "56级" },
+            { question: "把24颗糖平均分给6个小朋友，每人能分几颗？", answer: "4颗" },
+            { question: "有9盒铅笔，每盒4支，卖出4支，还剩多少支？", answer: "32支" },
+            { question: "一个数先加4，再减4，结果是35，这个数原来是多少？", answer: "35" },
+            { question: "小明排队买票，前面有6人，后面有5人，这队一共有多少人？", answer: "12人" },
+            { question: "从第3层走到第11层，每相邻两层有16级台阶，一共要走多少级？", answer: "128级" },
+            { question: "把15颗糖平均分给3个小朋友，每人能分几颗？", answer: "5颗" },
+            { question: "有6盒铅笔，每盒11支，卖出9支，还剩多少支？", answer: "57支" },
+            { question: "一个数先加2，再减8，结果是10，这个数原来是多少？", answer: "16" }
+        ];
+
+        let currentQuestionIndex = 0;
+        let correctCount = 0;
+        let currentLevel = 1;
+        let totalLevels = 10;
+        let shuffledRiddles = [];
+        let usedRiddles = [];
+        let levelRiddles = [];
+        let hintCount = 3;
+
+        // 选择类别
+  function selectCategory(category) {
+    currentCategory = category;
+    
+    switch(category) {
+        case 'puzzle':
+            currentRiddles = [...puzzleRiddles, ...defaultRiddles];
+            document.getElementById('categoryIndicator').textContent = '益智类';
+            document.getElementById('gameSubtitle').textContent = '益智类 - 考验逻辑思维和推理能力';
+            break;
+        case 'funny':
+            currentRiddles = [...funnyRiddles, ...defaultRiddles];
+            document.getElementById('categoryIndicator').textContent = '搞笑类';
+            document.getElementById('gameSubtitle').textContent = '搞笑类 - 轻松幽默，快乐答题';
+            break;
+        case 'word':
+            currentRiddles = [...wordRiddles];  // 改这里
+            document.getElementById('categoryIndicator').textContent = '文字类';
+            document.getElementById('gameSubtitle').textContent = '文字类 - 文字游戏，巧妙解谜';
+            break;
+    }
+    
+    // 切换到游戏页面
+    document.getElementById('categorySelection').classList.remove('active');
+    document.getElementById('gameArea').classList.add('active');
+    
+    // 初始化游戏
+    initGame();
+}
+
+        // 返回分类选择
+        function backToCategories() {
+            document.getElementById('gameArea').classList.remove('active');
+            document.getElementById('categorySelection').classList.add('active');
+            
+            // 重置游戏状态
+            currentLevel = 1;
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            usedRiddles = [];
+            hintCount = 3;
+            currentCategory = '';
+            currentRiddles = [];
+        }
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function initGame() {
+            currentLevel = 1;
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            usedRiddles = [];
+            startLevel();
+        }
+
+        function startLevel() {
+            const questionsInLevel = currentLevel * 10;
+           const availableRiddles = currentRiddles.filter(riddle => !usedRiddles.includes(riddle));
+            if (availableRiddles.length < questionsInLevel) {
+                alert('题目已用完！游戏结束！');
+                return;
+            }
+            
+            levelRiddles = shuffleArray(availableRiddles).slice(0, questionsInLevel);
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            hintCount = 3;
+            
+            updateDisplay();
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const questionBox = document.getElementById('questionBox');
+            questionBox.textContent = levelRiddles[currentQuestionIndex].question;
+            
+            document.getElementById('answerInput').value = '';
+            document.getElementById('resultMessage').style.display = 'none';
+            document.getElementById('answerReveal').style.display = 'none';
+            document.getElementById('answerInput').focus();
+            
+            const showButton = document.querySelector('.btn-show');
+            if (hintCount > 0) {
+                showButton.disabled = false;
+                showButton.style.opacity = '1';
+            } else {
+                showButton.disabled = true;
+                showButton.style.opacity = '0.5';
+            }
+        }
+
+        function updateDisplay() {
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('totalQuestions').textContent = currentLevel * 10;
+            document.getElementById('currentLevel').textContent = `${currentLevel}/${totalLevels}`;
+            document.getElementById('levelBadge').textContent = `第 ${currentLevel} 关`;
+            
+            const progress = ((currentQuestionIndex + 1) / (currentLevel * 10)) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            const hintCounter = document.getElementById('hintCounter');
+            if (hintCount > 0) {
+                hintCounter.textContent = `💡 显示答案机会：${hintCount} 次`;
+                hintCounter.classList.remove('hint-warning');
+            } else {
+                hintCounter.textContent = '⚠️ 显示答案机会已用完！';
+                hintCounter.classList.add('hint-warning');
+            }
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            const correctAnswer = levelRiddles[currentQuestionIndex].answer;
+            const resultMessage = document.getElementById('resultMessage');
+            
+            if (!userAnswer) {
+                resultMessage.textContent = '请输入答案！';
+                resultMessage.className = 'result-message result-wrong';
+                resultMessage.style.display = 'block';
+                return;
+            }
+
+            if (userAnswer === correctAnswer) {
+                correctCount++;
+                resultMessage.innerHTML = '🎉 答对了！太棒了！';
+                resultMessage.className = 'result-message result-correct';
+                resultMessage.style.display = 'block';
+                
+                document.getElementById('questionBox').classList.add('celebrate');
+                setTimeout(() => {
+                    document.getElementById('questionBox').classList.remove('celebrate');
+                }, 500);
+            } else {
+                resultMessage.innerHTML = '❌ 答错了，再想想吧！';
+                resultMessage.className = 'result-message result-wrong';
+                resultMessage.style.display = 'block';
+            }
+            
+            updateDisplay();
+        }
+
+        function showAnswer() {
+            if (hintCount <= 0) {
+                alert('显示答案机会已用完！你需要重新开始本关卡。');
+                showLevelFailed();
+                return;
+            }
+            
+            hintCount--;
+            updateDisplay();
+            
+            const answerReveal = document.getElementById('answerReveal');
+            const correctAnswer = levelRiddles[currentQuestionIndex].answer;
+            answerReveal.innerHTML = `<strong>正确答案是：</strong>${correctAnswer}`;
+            answerReveal.style.display = 'block';
+            
+            if (hintCount === 0) {
+                document.querySelector('.btn-show').disabled = true;
+                document.querySelector('.btn-show').style.opacity = '0.5';
+            }
+        }
+
+        function nextQuestion() {
+            const questionsInLevel = currentLevel * 10;
+            
+            if (currentQuestionIndex < questionsInLevel - 1) {
+                currentQuestionIndex++;
+                updateDisplay();
+                showQuestion();
+            } else {
+                showLevelComplete();
+            }
+        }
+
+        function showLevelComplete() {
+            const questionsInLevel = currentLevel * 10;
+            const percentage = Math.round((correctCount / questionsInLevel) * 100);
+            const requiredPercentage = 60;
+            
+            let stars = '';
+            if (percentage >= 90) stars = '⭐⭐⭐';
+            else if (percentage >= 70) stars = '⭐⭐';
+            else if (percentage >= requiredPercentage) stars = '⭐';
+            else stars = '😢';
+            
+            let message = '';
+            if (percentage >= requiredPercentage) {
+                message = `恭喜你完成了第 ${currentLevel} 关！`;
+                if (currentLevel < totalLevels) {
+                    message += `<br>准备好进入第 ${currentLevel + 1} 关了吗？`;
+                }
+            } else {
+                message = `很遗憾，你需要答对 ${requiredPercentage}% 才能进入下一关。`;
+                message += `<br>再试一次吧！`;
+            }
+            
+            const questionBox = document.getElementById('questionBox');
+            questionBox.innerHTML = `
+                <div class="level-complete">
+                    <h2>🎊 第 ${currentLevel} 关完成！🎊</h2>
+                    <div class="stars">${stars}</div>
+                    <p>答对 ${correctCount}/${questionsInLevel} 题 (${percentage}%)</p>
+                    <p>${message}</p>
+                </div>
+            `;
+            
+            document.getElementById('answerInput').style.display = 'none';
+            document.querySelector('.btn-submit').style.display = 'none';
+            document.querySelector('.btn-show').style.display = 'none';
+            document.getElementById('resultMessage').style.display = 'none';
+            document.getElementById('answerReveal').style.display = 'none';
+            
+            const nextButton = document.querySelector('.btn-next');
+            if (percentage >= requiredPercentage && currentLevel < totalLevels) {
+                nextButton.textContent = '进入下一关';
+                nextButton.onclick = nextLevel;
+            } else if (percentage >= requiredPercentage && currentLevel >= totalLevels) {
+                nextButton.textContent = '查看最终成绩';
+                nextButton.onclick = showFinalResult;
+            } else {
+                nextButton.textContent = '重新挑战本关';
+                nextButton.onclick = retryLevel;
+            }
+        }
+
+        function nextLevel() {
+            levelRiddles.forEach(riddle => {
+                if (!usedRiddles.includes(riddle)) {
+                    usedRiddles.push(riddle);
+                }
+            });
+            
+            currentLevel++;
+            
+            document.getElementById('answerInput').style.display = 'block';
+            document.querySelector('.btn-submit').style.display = 'inline-block';
+            document.querySelector('.btn-show').style.display = 'inline-block';
+            document.querySelector('.btn-next').textContent = '下一题';
+            document.querySelector('.btn-next').onclick = nextQuestion;
+            
+            startLevel();
+        }
+
+        function showLevelFailed() {
+            const questionBox = document.getElementById('questionBox');
+            questionBox.innerHTML = `
+                <div class="level-complete">
+                    <h2>😢 本关挑战失败</h2>
+                    <p>显示答案机会已用完！</p>
+                    <p>你需要重新开始本关卡。</p>
+                </div>
+            `;
+            
+            document.getElementById('answerInput').style.display = 'none';
+            document.querySelector('.btn-submit').style.display = 'none';
+            document.querySelector('.btn-show').style.display = 'none';
+            document.getElementById('resultMessage').style.display = 'none';
+            document.getElementById('answerReveal').style.display = 'none';
+            
+            const nextButton = document.querySelector('.btn-next');
+            nextButton.textContent = '重新开始本关';
+            nextButton.onclick = retryLevel;
+        }
+
+        function retryLevel() {
+            document.getElementById('answerInput').style.display = 'block';
+            document.querySelector('.btn-submit').style.display = 'inline-block';
+            document.querySelector('.btn-show').style.display = 'inline-block';
+            document.querySelector('.btn-next').textContent = '下一题';
+            document.querySelector('.btn-next').onclick = nextQuestion;
+            
+            startLevel();
+        }
+
+        function showFinalResult() {
+            const questionBox = document.getElementById('questionBox');
+            const totalQuestions = totalLevels * 10 + (totalLevels - 1) * totalLevels * 5;
+            const totalCorrect = usedRiddles.length;
+            const percentage = Math.round((totalCorrect / totalQuestions) * 100);
+            
+            let message = '';
+            let emoji = '';
+            
+            if (percentage >= 90) {
+                message = '完美！你是脑筋急转弯大师！🏆';
+                emoji = '👑';
+            } else if (percentage >= 70) {
+                message = '太棒了！你的思维很敏捷！🌟';
+                emoji = '🎯';
+            } else if (percentage >= 50) {
+                message = '不错！继续加油！💪';
+                emoji = '👍';
+            } else {
+                message = '还可以，多练习会更好！📚';
+                emoji = '🤔';
+            }
+            
+            questionBox.innerHTML = `
+                <div class="level-complete">
+                    <h2>🎊 恭喜通关！🎊</h2>
+                    <div class="emoji">${emoji}</div>
+                    <p>${message}</p>
+                    <p>你完成了所有 ${totalLevels} 个关卡！</p>
+                    <p>总共答对 ${totalCorrect} 道题目</p>
+                </div>
+            `;
+            
+            document.getElementById('answerInput').style.display = 'none';
+            document.querySelector('.btn-submit').style.display = 'none';
+            document.querySelector('.btn-show').style.display = 'none';
+            document.querySelector('.btn-next').textContent = '重新开始';
+            document.querySelector('.btn-next').onclick = restartGame;
+            document.getElementById('resultMessage').style.display = 'none';
+            document.getElementById('answerReveal').style.display = 'none';
+        }
+
+        function restartGame() {
+            document.getElementById('answerInput').style.display = 'block';
+            document.querySelector('.btn-submit').style.display = 'inline-block';
+            document.querySelector('.btn-show').style.display = 'inline-block';
+            document.querySelector('.btn-next').textContent = '下一题';
+            document.querySelector('.btn-next').onclick = nextQuestion;
+            initGame();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        }
+
+        window.onload = function() {
+    document.getElementById('categorySelection').classList.add('active');
+    document.getElementById('gameArea').classList.remove('active');
+};
+    </script>
+</body>
+</html>
